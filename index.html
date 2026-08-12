@@ -265,6 +265,32 @@
     border-color:#912018;
   }
 
+
+/* RC-07 / RC-08 operation controls — isolated from application modal CSS */
+#rc08WorkspaceOverlay{position:fixed!important;inset:0!important;z-index:2147483000!important;display:none!important;align-items:center!important;justify-content:center!important;background:rgba(15,23,42,.55)!important;backdrop-filter:blur(2px)!important;pointer-events:none!important;}
+#rc08WorkspaceOverlay.is-open{display:flex!important;pointer-events:auto!important;}
+#rc08WorkspaceOverlay .rc08-workspace{width:min(540px,calc(100vw - 32px))!important;max-height:calc(100vh - 32px)!important;overflow:hidden!important;border-radius:12px!important;background:#fff!important;box-shadow:0 24px 70px rgba(15,23,42,.28)!important;display:flex!important;flex-direction:column!important;position:relative!important;}
+#rc08WorkspaceOverlay .rc08-workspace-head{min-height:78px!important;padding:0 26px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;border-bottom:1px solid #e5e7eb!important;}
+#rc08WorkspaceOverlay .rc08-workspace-head h2{margin:0!important;font-size:21px!important;color:#202938!important;}
+#rc08WorkspaceOverlay .rc08-workspace-sub{font-size:12px!important;color:#64748b!important;margin-top:4px!important;}
+#rc08WorkspaceOverlay .rc08-workspace-body{padding:26px!important;overflow:auto!important;background:#fff!important;}
+#rc08WorkspaceOverlay .rc08-workspace-footer{padding:16px 26px 20px!important;background:#f8fafc!important;border-top:1px solid #e5e7eb!important;display:flex!important;justify-content:flex-end!important;gap:12px!important;}
+#rc08WorkspaceOverlay .rc08-btn{min-height:46px!important;padding:0 22px!important;border:1px solid #cbd5e1!important;border-radius:7px!important;background:#fff!important;color:#24344f!important;font-weight:700!important;cursor:pointer!important;}
+#rc08WorkspaceOverlay .rc08-btn.primary{background:#172b4d!important;color:#fff!important;border-color:#172b4d!important;}
+#rc08WorkspaceOverlay .rc08-field{margin-bottom:22px!important;}
+#rc08WorkspaceOverlay .rc08-field:last-child{margin-bottom:0!important;}
+#rc08WorkspaceOverlay .rc08-label{display:block!important;font-weight:700!important;font-size:14px!important;color:#252b36!important;margin-bottom:9px!important;}
+#rc08WorkspaceOverlay .rc08-label.required:after{content:' •';color:#e11d48;margin-left:2px;}
+#rc08WorkspaceOverlay select,#rc08WorkspaceOverlay input,#rc08WorkspaceOverlay textarea{width:100%!important;box-sizing:border-box!important;min-height:50px!important;border:1px solid #b8bcc4!important;border-radius:7px!important;background:#fff!important;padding:0 16px!important;font-size:16px!important;color:#252b36!important;outline:none!important;}
+#rc08WorkspaceOverlay textarea{padding:12px 16px!important;min-height:110px!important;}
+#rc08WorkspaceOverlay select:focus,#rc08WorkspaceOverlay input:focus,#rc08WorkspaceOverlay textarea:focus{border-color:#172b4d!important;box-shadow:0 0 0 2px rgba(23,43,77,.12)!important;}
+#rc08WorkspaceOverlay .rc08-execution-card{width:100%!important;}
+#rc08WorkspaceOverlay .rc08-report-banner{display:flex!important;align-items:center!important;gap:14px!important;background:#e9edf3!important;border-radius:7px!important;padding:18px 18px!important;margin-bottom:24px!important;color:#273653!important;font-size:15px!important;}
+#rc08WorkspaceOverlay .rc08-report-banner-icon{font-size:25px!important;line-height:1!important;}
+#rc08WorkspaceOverlay .rc08-execution-note{font-size:12px!important;color:#64748b!important;line-height:1.5!important;background:#f8fafc!important;border-radius:7px!important;padding:12px 14px!important;margin-top:6px!important;}
+#rc08WorkspaceOverlay .rc08-close{width:36px!important;height:36px!important;border:0!important;background:transparent!important;font-size:25px!important;line-height:1!important;color:#59616e!important;cursor:pointer!important;border-radius:6px!important;}
+#rc08WorkspaceOverlay .rc08-close:hover{background:#f1f5f9!important;}
+#rc08PortalMenu{z-index:2147482500!important;position:fixed!important;}
 </style>
 
 <style id="rc12-clean-redesign">
@@ -570,19 +596,11 @@
   #view-catalogue .rc13-page-size,#view-catalogue .rc13-sort-control{display:flex;align-items:center;gap:8px;font-size:11px;color:#667085;white-space:nowrap}
   #view-catalogue .rc13-page-size select,#view-catalogue .rc13-sort-control select{height:34px;padding:0 30px 0 10px;border:1px solid #d5dbe5;border-radius:7px;background:#fff;color:#344054;font-size:12px;outline:none;cursor:pointer}
   #view-catalogue .rc13-page-size select:focus-visible,#view-catalogue .rc13-sort-control select:focus-visible{outline:2px solid #8aa0bd;outline-offset:1px}
-  #view-catalogue .rc13-pagination{display:flex;align-items:center;justify-content:end;gap:5px;margin:14px 0 4px;min-height:38px}
+  #view-catalogue .rc13-pagination{display:flex;align-items:center;justify-content:center;gap:5px;margin:14px 0 4px;min-height:38px}
   #view-catalogue .rc13-page-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid #d5dbe5;border-radius:7px;background:#fff;color:#475467;cursor:pointer;transition:.15s ease}
   #view-catalogue .rc13-page-btn:hover:not(:disabled){background:#f5f7fa;border-color:#b7c0ce;color:#17243d}
   #view-catalogue .rc13-page-btn:focus-visible,#view-catalogue .rc13-page-number:focus-visible{outline:2px solid #7b8da8;outline-offset:2px}
   #view-catalogue .rc13-page-btn:disabled{opacity:.38;cursor:not-allowed;background:#f8fafc}
-  #view-catalogue .rc13-fixed-page-size{font-weight:600;color:#667085} #view-catalogue .rc13-fixed-page-size.rc13-hide-favourites{display:none!important}
-  #view-catalogue .rc13-navigation{margin-bottom:14px}
-  #view-catalogue .rc13-pagination{order:999;width:100%;margin:22px 0 24px;padding:10px 0 4px}
-  #view-catalogue #catalogueGrid + .rc13-pagination{clear:both}
-  /* Favourites is a dedicated saved-items view: never show RC-13 result navigation. */
-  #view-catalogue.rc13-favourites-active #rc13Navigation,
-  #view-catalogue.rc13-favourites-active #rc13Pagination,
-  #view-catalogue.rc13-favourites-active .rc13-fixed-page-size{display:none!important}
   #view-catalogue .rc13-page-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   #view-catalogue .rc13-page-text{width:auto;min-width:72px;padding:0 12px;font-size:12px;font-weight:600}
   #view-catalogue .rc13-page-numbers{display:flex;align-items:center;gap:4px}
@@ -610,15 +628,866 @@
 </style>
 
 
-<style id="rc13-favourites-hard-hide">
-#view-catalogue.rc13-favourites-active #rc13Navigation,
-#view-catalogue.rc13-favourites-active #rc13Pagination,
-#view-catalogue.rc13-favourites-active .rc13-result-range,
-#view-catalogue.rc13-favourites-active .rc13-fixed-page-size,
-#view-catalogue.rc13-favourites-active .rc13-sort-control {
-  display: none !important;
+<style id="rc07-rc08-final-css">
+/* ============================================================
+   RC-07 + RC-08 FINAL ISOLATED UI
+   This layer intentionally does not use .modal/.dropdown/global
+   action-menu styles from the application.
+   ============================================================ */
+
+#catalogueGrid > .rc07-card-ready{
+  position:relative !important;
+  overflow:visible !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc08-action-group{
+  position:absolute !important;
+  top:12px !important;
+  right:12px !important;
+  z-index:40 !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:7px !important;
+  width:auto !important;
+  height:34px !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc08-action-group .report-favourite-btn,
+#catalogueGrid > .rc07-card-ready .rc08-menu-trigger{
+  position:static !important;
+  inset:auto !important;
+  flex:0 0 34px !important;
+  width:34px !important;
+  height:34px !important;
+  min-width:34px !important;
+  max-width:34px !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border:1px solid #d5dce7 !important;
+  border-radius:8px !important;
+  background:#fff !important;
+  box-shadow:none !important;
+  transform:none !important;
+  cursor:pointer !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc08-menu-trigger:hover,
+#catalogueGrid > .rc07-card-ready .report-favourite-btn:hover{
+  background:#f7f9fc !important;
+  border-color:#aeb9c9 !important;
+}
+
+#catalogueGrid > .rc07-card-ready .report-favourite-btn.is-favourite{
+  color:#b7791f !important;
+  background:#fff8e7 !important;
+  border-color:#d9b85c !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc08-menu-trigger svg,
+#catalogueGrid > .rc07-card-ready .report-favourite-btn svg{
+  width:17px !important;
+  height:17px !important;
+  pointer-events:none !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-card-title,
+#catalogueGrid > .rc07-card-ready h1,
+#catalogueGrid > .rc07-card-ready h2,
+#catalogueGrid > .rc07-card-ready h3,
+#catalogueGrid > .rc07-card-ready h4,
+#catalogueGrid > .rc07-card-ready h5{
+  padding-right:94px !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-lifecycle-chip{
+  position:absolute !important;
+  top:17px !important;
+  right:88px !important;
+  z-index:35 !important;
+  max-width:92px !important;
+  height:24px !important;
+  padding:0 8px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border:1px solid #bfe0ce !important;
+  border-radius:3px !important;
+  background:#edf8f1 !important;
+  color:#26724c !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  text-transform:uppercase !important;
+  letter-spacing:.4px !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-description{
+  margin-top:8px !important;
+  color:#667085 !important;
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-description.is-collapsed{
+  display:-webkit-box !important;
+  -webkit-box-orient:vertical !important;
+  -webkit-line-clamp:2 !important;
+  overflow:hidden !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-read-toggle{
+  display:inline-flex !important;
+  margin-top:4px !important;
+  padding:0 !important;
+  border:0 !important;
+  background:transparent !important;
+  color:#173f86 !important;
+  font-size:11px !important;
+  font-weight:800 !important;
+  cursor:pointer !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-metadata{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:12px 22px !important;
+  margin-top:12px !important;
+  padding-top:12px !important;
+  border-top:1px solid #e6eaf0 !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-meta-item{
+  min-width:0 !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-meta-label{
+  display:block !important;
+  margin-bottom:4px !important;
+  color:#98a2b3 !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  text-transform:uppercase !important;
+  letter-spacing:.45px !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-meta-value{
+  display:block !important;
+  color:#344054 !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+
+#catalogueGrid > .rc07-card-ready .rc07-report-id{
+  margin-top:12px !important;
+  color:#8995aa !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+}
+
+#rc08PortalMenu{
+  position:fixed !important;
+  z-index:2147483000 !important;
+  width:226px !important;
+  max-width:calc(100vw - 20px) !important;
+  padding:6px !important;
+  background:#fff !important;
+  border:1px solid #d8dee8 !important;
+  border-radius:10px !important;
+  box-shadow:0 18px 42px rgba(16,24,40,.20) !important;
+  display:none !important;
+  box-sizing:border-box !important;
+}
+
+#rc08PortalMenu.is-open{
+  display:block !important;
+}
+
+#rc08PortalMenu .rc08-menu-item{
+  width:100% !important;
+  min-height:38px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:0 10px !important;
+  border:0 !important;
+  border-radius:7px !important;
+  background:#fff !important;
+  color:#344054 !important;
+  text-align:left !important;
+  font-size:12px !important;
+  font-weight:600 !important;
+  cursor:pointer !important;
+  box-sizing:border-box !important;
+}
+
+#rc08PortalMenu .rc08-menu-item:hover{
+  background:#f4f7fa !important;
+  color:#172b4d !important;
+}
+
+#rc08PortalMenu .rc08-menu-item:focus-visible{
+  outline:2px solid #91a4c2 !important;
+  outline-offset:-2px !important;
+}
+
+#rc08PortalMenu .rc08-menu-item.danger{
+  color:#b42318 !important;
+}
+
+#rc08PortalMenu .rc08-menu-item[disabled]{
+  display:none !important;
+}
+
+#rc08PortalMenu .rc08-menu-divider{
+  height:1px !important;
+  margin:5px 4px !important;
+  background:#eaecf0 !important;
+}
+
+#rc08PortalMenu .rc08-menu-icon{
+  width:16px !important;
+  height:16px !important;
+  flex:0 0 16px !important;
+}
+
+#rc08WorkspaceOverlay{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:2147482000 !important;
+  display:none !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:20px !important;
+  background:rgba(15,23,42,.48) !important;
+  box-sizing:border-box !important;
+}
+
+#rc08WorkspaceOverlay.is-open{
+  display:flex !important;
+}
+
+#rc08WorkspaceOverlay .rc08-workspace{
+  width:min(820px,calc(100vw - 40px)) !important;
+  max-height:min(760px,calc(100vh - 40px)) !important;
+  overflow:auto !important;
+  background:#fff !important;
+  border:1px solid #d8dee8 !important;
+  border-radius:12px !important;
+  box-shadow:0 28px 80px rgba(16,24,40,.28) !important;
+  box-sizing:border-box !important;
+}
+
+#rc08WorkspaceOverlay .rc08-workspace-head{
+  display:flex !important;
+  align-items:flex-start !important;
+  gap:14px !important;
+  padding:20px 22px 16px !important;
+  border-bottom:1px solid #eaecf0 !important;
+}
+
+#rc08WorkspaceOverlay .rc08-workspace-head-main{
+  flex:1 !important;
+  min-width:0 !important;
+}
+
+#rc08WorkspaceOverlay .rc08-workspace-head h2{
+  margin:0 !important;
+  color:#172b4d !important;
+  font-size:19px !important;
+  line-height:1.3 !important;
+}
+
+#rc08WorkspaceOverlay .rc08-workspace-sub{
+  margin-top:5px !important;
+  color:#667085 !important;
+  font-size:11px !important;
+}
+
+#rc08WorkspaceOverlay .rc08-close{
+  width:34px !important;
+  height:34px !important;
+  border:1px solid #d8dee8 !important;
+  border-radius:8px !important;
+  background:#fff !important;
+  color:#667085 !important;
+  cursor:pointer !important;
+}
+
+#rc08WorkspaceOverlay .rc08-workspace-body{
+  padding:20px 22px !important;
+}
+
+#rc08WorkspaceOverlay .rc08-workspace-grid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:12px !important;
+}
+
+#rc08WorkspaceOverlay .rc08-field{
+  padding:12px !important;
+  border:1px solid #e4e7ec !important;
+  border-radius:8px !important;
+  background:#fafbfc !important;
+}
+
+#rc08WorkspaceOverlay .rc08-field.full{
+  grid-column:1/-1 !important;
+}
+
+#rc08WorkspaceOverlay .rc08-label{
+  display:block !important;
+  margin-bottom:5px !important;
+  color:#98a2b3 !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  text-transform:uppercase !important;
+  letter-spacing:.45px !important;
+}
+
+#rc08WorkspaceOverlay .rc08-value{
+  color:#344054 !important;
+  font-size:12px !important;
+  line-height:1.5 !important;
+  font-weight:600 !important;
+}
+
+#rc08WorkspaceOverlay input,
+#rc08WorkspaceOverlay select,
+#rc08WorkspaceOverlay textarea{
+  width:100% !important;
+  min-height:36px !important;
+  padding:8px 10px !important;
+  border:1px solid #d0d5dd !important;
+  border-radius:7px !important;
+  background:#fff !important;
+  color:#344054 !important;
+  font-size:12px !important;
+  box-sizing:border-box !important;
+}
+
+#rc08WorkspaceOverlay textarea{
+  min-height:90px !important;
+  resize:vertical !important;
+}
+
+#rc08WorkspaceOverlay .rc08-workspace-footer{
+  display:flex !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  padding:14px 22px !important;
+  border-top:1px solid #eaecf0 !important;
+}
+
+#rc08WorkspaceOverlay .rc08-btn{
+  min-height:36px !important;
+  padding:0 14px !important;
+  border:1px solid #d0d5dd !important;
+  border-radius:7px !important;
+  background:#fff !important;
+  color:#344054 !important;
+  font-size:12px !important;
+  font-weight:700 !important;
+  cursor:pointer !important;
+}
+
+#rc08WorkspaceOverlay .rc08-btn.primary{
+  border-color:#172b4d !important;
+  background:#172b4d !important;
+  color:#fff !important;
+}
+
+#rc08WorkspaceOverlay .rc08-btn.danger{
+  border-color:#d92d20 !important;
+  background:#d92d20 !important;
+  color:#fff !important;
+}
+
+#rc08WorkspaceOverlay .rc08-confirm{
+  padding:14px !important;
+  border:1px solid #d8e0eb !important;
+  border-radius:8px !important;
+  background:#f7f9fc !important;
+  color:#344054 !important;
+  font-size:12px !important;
+  line-height:1.55 !important;
+}
+
+#rc07OverviewPanel{
+  position:fixed !important;
+  inset:0 !important;
+  z-index:2147481000 !important;
+  display:none !important;
+  align-items:center !important;
+  justify-content:center !important;
+  padding:20px !important;
+  background:rgba(15,23,42,.48) !important;
+}
+
+#rc07OverviewPanel.is-open{
+  display:flex !important;
+}
+
+#rc07OverviewPanel .rc07-overview{
+  width:min(760px,calc(100vw - 40px)) !important;
+  max-height:calc(100vh - 40px) !important;
+  overflow:auto !important;
+  background:#fff !important;
+  border:1px solid #d8dee8 !important;
+  border-radius:12px !important;
+  box-shadow:0 28px 80px rgba(16,24,40,.28) !important;
+}
+
+#rc07OverviewPanel .rc07-overview-head{
+  display:flex !important;
+  align-items:flex-start !important;
+  gap:14px !important;
+  padding:20px 22px 16px !important;
+  border-bottom:1px solid #eaecf0 !important;
+}
+
+#rc07OverviewPanel .rc07-overview-head-main{
+  flex:1 !important;
+}
+
+#rc07OverviewPanel h2{
+  margin:0 !important;
+  color:#172b4d !important;
+  font-size:19px !important;
+}
+
+#rc07OverviewPanel .rc07-overview-body{
+  padding:20px 22px !important;
+}
+
+#rc07OverviewPanel .rc07-overview-description{
+  margin:0 0 18px !important;
+  color:#475467 !important;
+  font-size:12px !important;
+  line-height:1.6 !important;
+}
+
+#rc07OverviewPanel .rc07-overview-grid{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:12px !important;
+}
+
+#rc07OverviewPanel .rc07-overview-item{
+  padding:12px !important;
+  border:1px solid #e4e7ec !important;
+  border-radius:8px !important;
+  background:#fafbfc !important;
+}
+
+#rc07OverviewPanel .rc07-overview-item.full{
+  grid-column:1/-1 !important;
+}
+
+#rc07OverviewPanel .label{
+  display:block !important;
+  margin-bottom:5px !important;
+  color:#98a2b3 !important;
+  font-size:9px !important;
+  font-weight:800 !important;
+  text-transform:uppercase !important;
+}
+
+#rc07OverviewPanel .value{
+  color:#344054 !important;
+  font-size:12px !important;
+  font-weight:600 !important;
+}
+
+#rc07OverviewPanel .rc07-overview-footer{
+  display:flex !important;
+  justify-content:flex-end !important;
+  gap:8px !important;
+  padding:14px 22px !important;
+  border-top:1px solid #eaecf0 !important;
+}
+
+@media(max-width:700px){
+  #catalogueGrid > .rc07-card-ready .rc07-metadata{
+    grid-template-columns:1fr !important;
+  }
+  #rc08WorkspaceOverlay .rc08-workspace-grid,
+  #rc07OverviewPanel .rc07-overview-grid{
+    grid-template-columns:1fr !important;
+  }
+  #catalogueGrid > .rc07-card-ready .rc07-lifecycle-chip{
+    display:none !important;
+  }
 }
 </style>
+
+
+<style id="rc07-final-behaviour-fixes">
+/* Existing catalogue metadata is the single source of truth. */
+#catalogueGrid > .rc07-card-ready .rc07-extra{display:none!important;}
+#catalogueGrid > .rc07-card-ready .rc07-lifecycle-chip{display:none!important;}
+
+/* Original card descriptions: keep the compact catalogue view until Read More. */
+#catalogueGrid > .rc07-card-ready .report-card-description,
+#catalogueGrid > .rc07-card-ready .card-description,
+#catalogueGrid > .rc07-card-ready .report-description,
+#catalogueGrid > .rc07-card-ready .description,
+#catalogueGrid > .rc07-card-ready .report-desc,
+#catalogueGrid > .rc07-card-ready .card-desc{
+  overflow:hidden!important;
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+}
+#catalogueGrid > .rc07-card-ready.rc07-description-expanded .report-card-description,
+#catalogueGrid > .rc07-card-ready.rc07-description-expanded .card-description,
+#catalogueGrid > .rc07-card-ready.rc07-description-expanded .report-description,
+#catalogueGrid > .rc07-card-ready.rc07-description-expanded .description,
+#catalogueGrid > .rc07-card-ready.rc07-description-expanded .report-desc,
+#catalogueGrid > .rc07-card-ready.rc07-description-expanded .card-desc{
+  display:block!important;
+  -webkit-line-clamp:unset!important;
+  max-height:none!important;
+}
+
+/* Ensure the existing Run Report modal uses the intended button styling. */
+#runReportModal .modal-footer{display:flex!important;justify-content:flex-end!important;align-items:center!important;gap:12px!important;padding:18px 26px!important;background:#f7f8fa!important;border-top:1px solid #e3e7ee!important;}
+#runReportModal .modal-footer .btn{min-height:46px!important;height:46px!important;padding:0 22px!important;border-radius:8px!important;border:1px solid #cbd3df!important;font-size:14px!important;font-weight:700!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;cursor:pointer!important;box-sizing:border-box!important;}
+#runReportModal .modal-footer .btn-secondary{background:#fff!important;color:#1d2d49!important;border-color:#cbd3df!important;}
+#runReportModal .modal-footer .btn-primary{background:#172b4d!important;color:#fff!important;border-color:#172b4d!important;box-shadow:0 2px 4px rgba(23,43,77,.16)!important;}
+#runReportModal .modal-footer .btn-primary:hover{background:#243b63!important;border-color:#243b63!important;}
+#runReportModal .modal-footer .btn-secondary:hover{background:#f7f9fc!important;}
+</style>
+
+
+<style id="rc07-modal-final-override">
+#runReportModal{z-index:2147482000!important;}
+#runReportModal .modal{width:min(540px,calc(100vw - 32px))!important;max-width:540px!important;border-radius:12px!important;overflow:hidden!important;background:#fff!important;box-shadow:0 24px 70px rgba(15,23,42,.28)!important;}
+#runReportModal .modal-footer .btn{appearance:none!important;-webkit-appearance:none!important;min-width:96px!important;}
+#runReportModal .modal-footer .btn-primary{min-width:168px!important;}
+</style>
+
+<style id="rc07-story-final-overrides">
+/* =========================================================
+   RC-07 FINAL VISUAL / ACCESSIBILITY OVERRIDES
+   These rules are intentionally namespaced so existing app CSS
+   cannot break the report overview/workspace controls.
+   ========================================================= */
+
+/* One clean lifecycle badge, placed beside the Report ID rather than
+   competing with the title/action buttons. */
+#catalogueGrid > .rc07-card-ready .rc07-story-lifecycle{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  vertical-align:middle!important;
+  margin-left:10px!important;
+  padding:4px 9px!important;
+  min-height:22px!important;
+  box-sizing:border-box!important;
+  border:1px solid #b9dfcb!important;
+  border-radius:4px!important;
+  background:#eef9f2!important;
+  color:#21734b!important;
+  font-size:10px!important;
+  line-height:1!important;
+  font-weight:800!important;
+  letter-spacing:.45px!important;
+  text-transform:uppercase!important;
+  white-space:nowrap!important;
+}
+#catalogueGrid > .rc07-card-ready .rc07-story-lifecycle.is-draft{
+  background:#fff8e7!important;
+  border-color:#e5c978!important;
+  color:#7a5b12!important;
+}
+#catalogueGrid > .rc07-card-ready .rc07-story-lifecycle.is-archived{
+  background:#f3f4f6!important;
+  border-color:#d0d5dd!important;
+  color:#667085!important;
+}
+/* Hide lifecycle text that the legacy renderer places near the title.
+   The authoritative badge above is reinserted beside Report ID. */
+#catalogueGrid > .rc07-card-ready .rc07-story-legacy-lifecycle{
+  display:none!important;
+}
+
+/* Correct, recognisable favourite star. */
+#catalogueGrid > .rc07-card-ready .rc08-action-group > .report-favourite-btn{
+  color:#667085!important;
+  background:#fff!important;
+  border:1px solid #cfd7e3!important;
+  border-radius:8px!important;
+  width:36px!important;
+  min-width:36px!important;
+  height:36px!important;
+  min-height:36px!important;
+  padding:0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#catalogueGrid > .rc07-card-ready .rc08-action-group > .report-favourite-btn svg{
+  width:19px!important;
+  height:19px!important;
+  stroke-width:1.9!important;
+}
+#catalogueGrid > .rc07-card-ready .rc08-action-group > .report-favourite-btn.is-favourite{
+  color:#b7791f!important;
+  background:#fff8e7!important;
+  border-color:#d9b85c!important;
+}
+#catalogueGrid > .rc07-card-ready .rc08-action-group > .report-favourite-btn:focus-visible,
+#catalogueGrid > .rc07-card-ready .rc08-action-group > .rc08-menu-trigger:focus-visible{
+  outline:3px solid rgba(35,91,170,.22)!important;
+  outline-offset:2px!important;
+}
+
+/* Keep the overflow action independent from the star. */
+#catalogueGrid > .rc07-card-ready .rc08-action-group{
+  top:12px!important;
+  right:12px!important;
+  gap:7px!important;
+  z-index:50!important;
+}
+#catalogueGrid > .rc07-card-ready .rc08-action-group > .rc08-menu-trigger{
+  width:36px!important;
+  min-width:36px!important;
+  height:36px!important;
+  min-height:36px!important;
+  border-radius:8px!important;
+}
+
+/* Report Overview modal — never inherit browser/default button styles. */
+#rc07OverviewPanel{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483600!important;
+  display:none!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:24px!important;
+  box-sizing:border-box!important;
+  background:rgba(15,23,42,.48)!important;
+}
+#rc07OverviewPanel.is-open{display:flex!important;}
+#rc07OverviewPanel .rc07-overview{
+  width:min(760px,calc(100vw - 48px))!important;
+  max-height:calc(100vh - 48px)!important;
+  margin:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  overflow:hidden!important;
+  background:#fff!important;
+  border:1px solid #d8dee8!important;
+  border-top:3px solid #c89b3c!important;
+  border-radius:12px!important;
+  box-shadow:0 24px 70px rgba(15,23,42,.28)!important;
+}
+#rc07OverviewPanel .rc07-overview-head{
+  flex:0 0 auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:16px!important;
+  padding:18px 22px!important;
+  border-bottom:1px solid #e5e7eb!important;
+  background:#fff!important;
+}
+#rc07OverviewPanel .rc07-overview-head-main{min-width:0!important;}
+#rc07OverviewPanel #rc07OverviewTitle{
+  margin:0!important;
+  color:#172b4d!important;
+  font-size:20px!important;
+  line-height:1.25!important;
+  font-weight:750!important;
+}
+#rc07OverviewPanel .rc07-overview-head [data-close-overview]{
+  flex:0 0 34px!important;
+  width:34px!important;
+  height:34px!important;
+  min-width:34px!important;
+  min-height:34px!important;
+  padding:0!important;
+  margin:0!important;
+  border:1px solid #cbd3df!important;
+  border-radius:7px!important;
+  background:#fff!important;
+  color:#475467!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  cursor:pointer!important;
+}
+#rc07OverviewPanel .rc07-overview-body{
+  flex:1 1 auto!important;
+  overflow:auto!important;
+  padding:22px!important;
+}
+#rc07OverviewPanel .rc07-overview-footer{
+  flex:0 0 auto!important;
+  min-height:78px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  padding:16px 22px!important;
+  box-sizing:border-box!important;
+  border-top:1px solid #e5e7eb!important;
+  background:#f8fafc!important;
+}
+#rc07OverviewPanel .rc07-overview-footer button,
+#rc07OverviewPanel .rc07-overview-footer [data-open-workspace],
+#rc07OverviewPanel .rc07-overview-footer [data-close-overview]{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  width:auto!important;
+  min-width:104px!important;
+  height:42px!important;
+  min-height:42px!important;
+  margin:0!important;
+  padding:0 18px!important;
+  border-radius:8px!important;
+  box-sizing:border-box!important;
+  font-family:inherit!important;
+  font-size:13px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+  cursor:pointer!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#rc07OverviewPanel .rc07-overview-footer [data-close-overview]{
+  background:#fff!important;
+  color:#172b4d!important;
+  border:1px solid #cbd3df!important;
+  box-shadow:none!important;
+}
+#rc07OverviewPanel .rc07-overview-footer [data-open-workspace]{
+  min-width:190px!important;
+  background:#172b4d!important;
+  color:#fff!important;
+  border:1px solid #172b4d!important;
+  box-shadow:0 2px 4px rgba(23,43,77,.16)!important;
+}
+#rc07OverviewPanel .rc07-overview-footer [data-close-overview]:hover{background:#f3f6fa!important;}
+#rc07OverviewPanel .rc07-overview-footer [data-open-workspace]:hover{background:#243b63!important;border-color:#243b63!important;}
+
+/* RC-08 workspace modal buttons. */
+#rc08WorkspaceOverlay .rc08-workspace-footer{
+  flex:0 0 auto!important;
+  min-height:78px!important;
+  padding:16px 22px!important;
+  box-sizing:border-box!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  border-top:1px solid #e5e7eb!important;
+  background:#f8fafc!important;
+}
+#rc08WorkspaceOverlay .rc08-workspace-footer .rc08-btn{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:104px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:0 18px!important;
+  margin:0!important;
+  border-radius:8px!important;
+  box-sizing:border-box!important;
+  font-family:inherit!important;
+  font-size:13px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  cursor:pointer!important;
+  text-transform:none!important;
+}
+#rc08WorkspaceOverlay .rc08-workspace-footer .rc08-btn:not(.primary){
+  background:#fff!important;
+  color:#172b4d!important;
+  border:1px solid #cbd3df!important;
+}
+#rc08WorkspaceOverlay .rc08-workspace-footer .rc08-btn.primary{
+  background:#172b4d!important;
+  color:#fff!important;
+  border:1px solid #172b4d!important;
+  min-width:150px!important;
+}
+
+/* Explicit Execute modal from the existing application. */
+#runReportModal .modal-footer{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  min-height:78px!important;
+  padding:16px 22px!important;
+  box-sizing:border-box!important;
+  background:#f8fafc!important;
+  border-top:1px solid #e5e7eb!important;
+}
+#runReportModal .modal-footer button{
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:104px!important;
+  height:42px!important;
+  min-height:42px!important;
+  padding:0 18px!important;
+  margin:0!important;
+  border-radius:8px!important;
+  box-sizing:border-box!important;
+  font-family:inherit!important;
+  font-size:13px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  cursor:pointer!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#runReportModal .modal-footer button.btn-secondary{
+  background:#fff!important;
+  color:#172b4d!important;
+  border:1px solid #cbd3df!important;
+}
+#runReportModal .modal-footer button.btn-primary{
+  min-width:168px!important;
+  background:#172b4d!important;
+  color:#fff!important;
+  border:1px solid #172b4d!important;
+}
+
+@media(max-width:700px){
+  #rc07OverviewPanel{padding:12px!important;}
+  #rc07OverviewPanel .rc07-overview{width:100%!important;max-height:calc(100vh - 24px)!important;}
+  #rc07OverviewPanel .rc07-overview-footer,
+  #rc08WorkspaceOverlay .rc08-workspace-footer,
+  #runReportModal .modal-footer{flex-wrap:wrap!important;}
+  #rc07OverviewPanel .rc07-overview-footer button,
+  #rc08WorkspaceOverlay .rc08-workspace-footer .rc08-btn,
+  #runReportModal .modal-footer button{flex:1 1 auto!important;}
+}
+</style>
+
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -886,9 +1755,16 @@
           <div class="rc13-navigation" id="rc13Navigation" aria-label="Report result navigation">
             <div class="rc13-nav-left">
               <div class="rc13-result-range" id="rc13ResultRange" aria-live="polite">Showing 0–0 of 0 reports</div>
-              <div class="rc13-page-size rc13-fixed-page-size" aria-label="Rows per page">
-                <span>8 reports per page</span>
-              </div>
+              <label class="rc13-page-size">
+                <span>Rows per page</span>
+                <select id="rc13PageSize" aria-label="Rows per page">
+                  <option value="8">8</option>
+                  <option value="16">16</option>
+                  <option value="24">24</option>
+                  <option value="48">48</option>
+                  <option value="100">100</option>
+                </select>
+              </label>
             </div>
             <div class="rc13-nav-right">
               <label class="rc13-sort-control">
@@ -1757,284 +2633,8 @@
 })();
 </script>
 
-<script>
-(function () {
-  const STORAGE_KEY = 'vpiLiteFavouriteReports';
-  let favouriteIds = new Set();
-  let activeCatalogueTab = 'public';
-  let syncing = false;
+<!-- Removed conflicting legacy RC-07 favourite manager. The consolidated manager is added at the end. -->
 
-  function loadFavourites() {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      favouriteIds = new Set(Array.isArray(saved) ? saved.map(String) : []);
-    } catch (_) {
-      favouriteIds = new Set();
-    }
-  }
-
-  function saveFavourites() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(favouriteIds)));
-  }
-
-  function normalise(value) {
-    return String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
-  }
-
-  function getCardId(card) {
-    if (!card) return '';
-
-    const explicit =
-      card.dataset.reportId ||
-      card.getAttribute('data-report-id') ||
-      card.dataset.id ||
-      card.id;
-
-    if (explicit) return normalise(explicit);
-
-    const title = card.querySelector(
-      '.report-card-title,.card-title,.report-name,[data-report-name],h1,h2,h3,h4,h5'
-    );
-
-    if (title && title.textContent.trim()) {
-      return normalise(title.textContent);
-    }
-
-    // Stable fallback based on the card's text.
-    return normalise(card.textContent).slice(0, 200);
-  }
-
-  function getCards() {
-    const grid = document.getElementById('catalogueGrid');
-    if (!grid) return [];
-
-    return Array.from(grid.children).filter(
-      card => !card.classList.contains('report-grid-empty')
-    );
-  }
-
-  function updateStar(button, id) {
-    const isFavourite = favouriteIds.has(id);
-
-    button.classList.toggle('is-favourite', isFavourite);
-    button.setAttribute(
-      'aria-label',
-      isFavourite ? 'Remove from favourites' : 'Add to favourites'
-    );
-    button.setAttribute(
-      'title',
-      isFavourite ? 'Remove from favourites' : 'Add to favourites'
-    );
-
-    button.innerHTML = isFavourite
-      ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.63 5.33 5.88.85-4.25 4.14 1 5.85L12 16.92l-5.26 2.75 1-5.85L3.49 9.68l5.88-.85L12 3.5z"/></svg>'
-      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.63 5.33 5.88.85-4.25 4.14 1 5.85L12 16.92l-5.26 2.75 1-5.85L3.49 9.68l5.88-.85L12 3.5z"/></svg>';
-  }
-
-  function ensureFavouriteButton(card) {
-    if (!card || card.classList.contains('report-grid-empty')) return;
-
-    const id = getCardId(card);
-    if (!id) return;
-
-    let button = card.querySelector('.report-favourite-btn');
-
-    if (!button) {
-      if (getComputedStyle(card).position === 'static') {
-        card.style.position = 'relative';
-      }
-
-      button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'report-favourite-btn';
-      button.dataset.reportFavourite = id;
-      button.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.63 5.33 5.88.85-4.25 4.14 1 5.85L12 16.92l-5.26 2.75 1-5.85L3.49 9.68l5.88-.85L12 3.5z"/></svg>';
-
-      // Keep the star independent from the card click/navigation.
-      button.addEventListener('click', function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        toggleFavourite(id);
-      });
-
-      card.appendChild(button);
-    }
-
-    updateStar(button, id);
-  }
-
-  function toggleFavourite(id) {
-    id = String(id);
-
-    if (favouriteIds.has(id)) {
-      favouriteIds.delete(id);
-      showFavouriteToast('Removed from favourites', 'info');
-    } else {
-      favouriteIds.add(id);
-      showFavouriteToast('Added to favourites', 'success');
-    }
-
-    saveFavourites();
-    syncCatalogue();
-    document.dispatchEvent(new CustomEvent('vpi:favourites-changed'));
-  }
-
-  function showFavouriteToast(message, type) {
-    if (typeof window.showToast === 'function') {
-      window.showToast(message, type);
-    } else if (window.VP && VP.ui && typeof VP.ui.toast === 'function') {
-      VP.ui.toast(type || 'success', message, '');
-    }
-  }
-
-  function updateTabState() {
-    document.querySelectorAll('#view-catalogue .tab-btn').forEach(tab => {
-      const active = tab.dataset.tab === activeCatalogueTab;
-      tab.classList.toggle('is-active', active);
-      tab.setAttribute('aria-selected', String(active));
-    });
-  }
-
-  function updateResultCount(visibleCount) {
-    const count = document.getElementById('catalogueResultCount');
-    if (!count) return;
-    count.textContent = visibleCount + (visibleCount === 1 ? ' report' : ' reports');
-  }
-
-  function syncCatalogue() {
-    if (syncing) return;
-    syncing = true;
-
-    const cards = getCards();
-
-    cards.forEach(card => {
-      ensureFavouriteButton(card);
-
-      const id = getCardId(card);
-      // Only the Favourites tab owns card visibility here. Public/Private
-      // visibility must remain under the catalogue's original filtering logic;
-      // otherwise switching away from Favourites can incorrectly hide or show
-      // cards from the wrong catalogue tab. Pagination is applied separately.
-      if (activeCatalogueTab === 'favourites') {
-        const favouriteAllowed = favouriteIds.has(id);
-        const paginationAllows = card.dataset.rc13PaginationHidden !== 'true';
-        card.style.display = favouriteAllowed && paginationAllows ? '' : 'none';
-      }
-
-      const star = card.querySelector('.report-favourite-btn');
-      if (star) updateStar(star, id);
-    });
-
-    const visibleCards = cards.filter(card => {
-      const style = window.getComputedStyle(card);
-      return style.display !== 'none' && !card.hidden;
-    });
-
-    updateResultCount(visibleCards.length);
-    updateTabState();
-    renderCatalogueEmptyState();
-
-    syncing = false;
-  }
-
-  function renderCatalogueEmptyState() {
-    const grid = document.getElementById('catalogueGrid');
-    if (!grid) return;
-
-    const cards = getCards();
-    const visibleCards = cards.filter(card => {
-      const style = window.getComputedStyle(card);
-      return style.display !== 'none' && !card.hidden;
-    });
-
-    let empty = grid.querySelector('.report-grid-empty');
-
-    if (!visibleCards.length) {
-      if (!empty) {
-        grid.classList.add('is-empty');
-        const isFavourites = activeCatalogueTab === 'favourites';
-        grid.insertAdjacentHTML('beforeend', `
-          <div class="report-grid-empty" role="status" aria-live="polite">
-            <div class="report-grid-empty-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                ${isFavourites
-                  ? '<path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"></path>'
-                  : '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path>'}
-              </svg>
-            </div>
-            <strong>${isFavourites ? 'No favourites added' : 'No reports match your filters'}</strong>
-            <span>${isFavourites ? 'Reports you mark as favourites will appear here.' : 'Try adjusting your search or clearing one or more filters.'}</span>
-          </div>
-        `);
-      } else if (empty) {
-        const isFavourites = activeCatalogueTab === 'favourites';
-        const title = empty.querySelector('strong');
-        const desc = empty.querySelector('span');
-        if (title) title.textContent = isFavourites ? 'No favourites added' : 'No reports match your filters';
-        if (desc) desc.textContent = isFavourites ? 'Reports you mark as favourites will appear here.' : 'Try adjusting your search or clearing one or more filters.';
-      }
-    } else {
-      if (empty) empty.remove();
-      grid.classList.remove('is-empty');
-    }
-  }
-
-  function setActiveTab(tab) {
-    activeCatalogueTab = tab || 'public';
-    syncCatalogue();
-  }
-
-  document.addEventListener('click', function (event) {
-    const tab = event.target.closest('#view-catalogue .tab-btn');
-
-    if (tab) {
-      // Let the application's original Public/Private tab handler run as well.
-      // This RC-13 layer only tracks the active tab and must not block the
-      // catalogue's own data filtering.
-      setActiveTab(tab.dataset.tab);
-      setTimeout(() => {
-        const active = document.querySelector('#view-catalogue .tab-btn.is-active');
-        if (active && active.dataset.tab) currentTab = active.dataset.tab;
-        invalidateEligibility();
-        apply();
-      }, 80);
-      return;
-    }
-
-    // Handles stars even if another script recreates the card/button.
-    const star = event.target.closest('.report-favourite-btn');
-
-    if (star) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      const id = star.dataset.reportFavourite;
-      if (id) toggleFavourite(id);
-    }
-  }, true);
-
-  document.addEventListener('DOMContentLoaded', function () {
-    loadFavourites();
-
-    const grid = document.getElementById('catalogueGrid');
-    if (!grid) return;
-
-    const observer = new MutationObserver(function () {
-      requestAnimationFrame(syncCatalogue);
-    });
-
-    observer.observe(grid, {
-      childList: true,
-      subtree: true
-    });
-
-    syncCatalogue();
-
-    setTimeout(syncCatalogue, 300);
-    setTimeout(syncCatalogue, 800);
-  });
-})();
-</script>\n
 <script src="js/utility.js"></script>
 <script src="js/data.js"></script>
 <script src="js/chart.js"></script>
@@ -2043,7 +2643,8 @@
 <script src="js/header.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/wizard.js"></script>
-<script src="js/app.js"></script>\n<script id="rc13-pagination-script">
+<script src="js/app.js"></script>
+<script id="rc13-pagination-script">
 (function(){
   'use strict';
 
@@ -2057,7 +2658,6 @@
 
   function state(){
     if(!stateByTab[currentTab]) stateByTab[currentTab] = {...defaultState};
-    stateByTab[currentTab].pageSize = 8;
     return stateByTab[currentTab];
   }
 
@@ -2165,16 +2765,6 @@
   function apply(resetIfNeeded){
     if(isApplying) return;
     const g=grid(); if(!g) return;
-
-    // Always derive the active catalogue tab from the actual UI state.
-    // This prevents the pagination layer from retaining 'public' after the
-    // Favourites tab has been selected by the catalogue's own tab handler.
-    const activeButton=document.querySelector('#view-catalogue .tab-btn.is-active');
-    if(activeButton?.dataset.tab) currentTab=activeButton.dataset.tab;
-    const catalogueView=document.getElementById('view-catalogue');
-    const isFavouritesNow=currentTab==='favourites';
-    catalogueView?.classList.toggle('rc13-favourites-active',isFavouritesNow);
-
     isApplying=true;
     const st=state();
     const all=cards();
@@ -2187,21 +2777,7 @@
         card.dataset.rc13FilteredVisible=(getComputedStyle(card).display!=='none' && !card.hidden)?'true':'false';
       }
     });
-    const favouriteIds = currentTab === 'favourites' ? (() => {
-      try {
-        const saved = JSON.parse(localStorage.getItem('vpiLiteFavouriteReports') || '[]');
-        return new Set(Array.isArray(saved) ? saved.map(v => norm(v)) : []);
-      } catch (_) {
-        return new Set();
-      }
-    })() : null;
-
-    const filtered=all.filter(card=>{
-      if(card.dataset.rc13FilteredVisible==='false') return false;
-      if(currentTab !== 'favourites') return true;
-      const id = norm(card.dataset.reportId || card.getAttribute('data-report-id') || card.dataset.id || card.id || firstText(card,['.report-card-title','.card-title','.report-name','[data-report-name]','h1','h2','h3','h4','h5']));
-      return favouriteIds.has(id);
-    });
+    const filtered=all.filter(card=>card.dataset.rc13FilteredVisible!=='false');
 
     const sorted=sortCards(filtered);
     sorted.forEach((item,index)=>{
@@ -2223,30 +2799,11 @@
       card.style.display=should?'':'none';
     });
 
-    const isFavourites = currentTab === 'favourites';
-
-    // Favourites is a clean saved-items view. Do not render/update any of the
-    // RC-13 result navigation UI in this tab. Public and Private Reports use
-    // the fixed 6-card pagination.
-    const navigation=document.getElementById('rc13Navigation');
-    const nav=document.getElementById('rc13Pagination');
-    const fixedPageSize=document.querySelector('.rc13-fixed-page-size');
-    const sortControl=document.querySelector('.rc13-sort-control');
-    if(isFavourites){
-      if(navigation) navigation.style.setProperty('display','none','important');
-      if(nav) nav.style.setProperty('display','none','important');
-      if(fixedPageSize) fixedPageSize.style.setProperty('display','none','important');
-      if(sortControl) sortControl.style.setProperty('display','none','important');
-    } else {
-      if(navigation) navigation.style.setProperty('display','flex','important');
-      if(nav) nav.style.setProperty('display', totalPages>1 ? 'flex' : 'none','important');
-      if(fixedPageSize) fixedPageSize.style.setProperty('display','inline-flex','important');
-      if(sortControl) sortControl.style.setProperty('display','flex','important');
-      updateRange(total,total?start+1:0,end);
-      updateControls(total,st.page,totalPages);
-      const ps=document.getElementById('rc13PageSize'); if(ps) ps.value=String(st.pageSize);
-      const sort=document.getElementById('rc13Sort'); if(sort) sort.value=st.sort;
-    }
+    updateRange(total,total?start+1:0,end);
+    updateControls(total,st.page,totalPages);
+    const ps=document.getElementById('rc13PageSize'); if(ps) ps.value=String(st.pageSize);
+    const sort=document.getElementById('rc13Sort'); if(sort) sort.value=st.sort;
+    const nav=document.getElementById('rc13Pagination'); if(nav) nav.style.display=totalPages>1?'flex':'none';
     const empty=g.querySelector('.report-grid-empty');
     if(empty) empty.style.display=total===0?'flex':'none';
     isApplying=false;
@@ -2285,7 +2842,7 @@
   function init(){
     const g=grid(); if(!g) return;
     const ps=document.getElementById('rc13PageSize'), sort=document.getElementById('rc13Sort');
-    ps?.addEventListener('change',()=>{ state().pageSize=8; state().page=1; setLoading(true); apply(); });
+    ps?.addEventListener('change',()=>{ state().pageSize=Number(ps.value)||8; state().page=1; setLoading(true); apply(); });
     sort?.addEventListener('change',()=>{ state().sort=sort.value||'name-asc'; state().page=1; setLoading(true); apply(); });
     document.getElementById('rc13First')?.addEventListener('click',()=>goTo(1,true));
     document.getElementById('rc13Prev')?.addEventListener('click',()=>goTo(state().page-1,true));
@@ -2307,14 +2864,7 @@
         currentTab=tab.dataset.tab||'public';
         if(!stateByTab[currentTab]) stateByTab[currentTab]={...defaultState};
         invalidateEligibility();
-        const isFav = currentTab === 'favourites';
-        const navigation = document.getElementById('rc13Navigation');
-        const pagination = document.getElementById('rc13Pagination');
-        const view=document.getElementById('view-catalogue');
-        view?.classList.toggle('rc13-favourites-active',isFav);
-        if(navigation) navigation.style.setProperty('display', isFav ? 'none' : 'flex', 'important');
-        if(pagination) pagination.style.setProperty('display', isFav ? 'none' : 'flex', 'important');
-        apply();
+        schedule(false);
       });
     });
 
@@ -2323,42 +2873,16 @@
     // We compare a stable card signature to avoid reacting to our own pagination changes.
     const observer = new MutationObserver(() => {
       if (isApplying) return;
-      const activeButton=document.querySelector('#view-catalogue .tab-btn.is-active');
-      const detectedTab=activeButton?.dataset.tab || currentTab;
       const sig = cardSignature();
-      const tabChanged=detectedTab!==currentTab;
-      if (tabChanged || sig !== lastCardSignature) {
-        currentTab=detectedTab;
+      if (sig !== lastCardSignature) {
         state().page = 1;
         invalidateEligibility();
         apply();
-      } else {
-        // Keep the Favourites chrome hidden even if another catalogue script
-        // re-renders the navigation nodes.
-        const view=document.getElementById('view-catalogue');
-        const fav=currentTab==='favourites';
-        view?.classList.toggle('rc13-favourites-active',fav);
-        document.getElementById('rc13Navigation')?.style.setProperty('display',fav?'none':'flex','important');
-        document.getElementById('rc13Pagination')?.style.setProperty('display',fav?'none':'flex','important');
       }
     });
     observer.observe(g, { childList:true });
-    const tabObserver=new MutationObserver(()=>{
-      const activeButton=document.querySelector('#view-catalogue .tab-btn.is-active');
-      const detectedTab=activeButton?.dataset.tab || 'public';
-      if(detectedTab!==currentTab){
-        currentTab=detectedTab;
-        state().page=1;
-        invalidateEligibility();
-        apply();
-      }
-    });
-    document.querySelectorAll('#view-catalogue .tab-btn').forEach(tab=>tabObserver.observe(tab,{attributes:true,attributeFilter:['class','aria-selected']}));
 
     const initialise = () => {
-      const activeButton=document.querySelector('#view-catalogue .tab-btn.is-active');
-      if(activeButton?.dataset.tab) currentTab=activeButton.dataset.tab;
-      document.getElementById('view-catalogue')?.classList.toggle('rc13-favourites-active',currentTab==='favourites');
       if (cards().length && !lastCardSignature) {
         invalidateEligibility();
         apply();
@@ -2369,14 +2893,6 @@
     setTimeout(initialise, 300);
     setTimeout(initialise, 700);
     setTimeout(initialise, 1200);
-
-    document.addEventListener('vpi:favourites-changed', () => {
-      if(currentTab === 'favourites') {
-        state().page = 1;
-        invalidateEligibility();
-        apply();
-      }
-    });
 
     // Keyboard navigation: Left/Right moves between pages when pagination has focus.
     document.getElementById('rc13Pagination')?.addEventListener('keydown',e=>{
@@ -2394,6 +2910,1361 @@
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
   else init();
 })();
-</script>\n
+</script>
+
+
+<script id="rc07-rc08-final-script">
+(function(){
+  'use strict';
+
+  const FAV_KEY = 'vpiLiteFavouriteReports';
+  const CURRENT_USER = 'Ragul K';
+  const CURRENT_ROLE = 'Report Author';
+  let activeCard = null;
+  let menuTrigger = null;
+
+  const esc = value => String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+
+  const norm = value => String(value || '').replace(/\s+/g,' ').trim();
+
+  function toast(message, type='success'){
+    if(typeof window.showToast === 'function'){
+      window.showToast(message,type);
+      return;
+    }
+    if(window.VP && VP.ui && typeof VP.ui.toast === 'function'){
+      VP.ui.toast(type,message,'');
+      return;
+    }
+    let el=document.getElementById('rc07rc08Toast');
+    if(!el){
+      el=document.createElement('div');
+      el.id='rc07rc08Toast';
+      Object.assign(el.style,{
+        position:'fixed',right:'22px',bottom:'22px',zIndex:'2147483647',
+        padding:'11px 15px',borderRadius:'8px',background:'#172b4d',
+        color:'#fff',fontSize:'12px',fontWeight:'700',boxShadow:'0 12px 30px rgba(16,24,40,.22)'
+      });
+      document.body.appendChild(el);
+    }
+    el.textContent=message;
+    el.style.display='block';
+    clearTimeout(el._t);
+    el._t=setTimeout(()=>el.style.display='none',2200);
+  }
+
+  function cards(){
+    const g=document.getElementById('catalogueGrid');
+    if(!g) return [];
+    return Array.from(g.children).filter(c=>!c.classList.contains('report-grid-empty') && !c.classList.contains('rc13-loading'));
+  }
+
+  function firstText(card, selectors){
+    for(const s of selectors){
+      const el=card.querySelector(s);
+      if(el && norm(el.textContent)) return norm(el.textContent);
+    }
+    return '';
+  }
+
+  function cardId(card){
+    const value = norm(
+      card.dataset.reportId ||
+      card.getAttribute('data-report-id') ||
+      card.dataset.id ||
+      card.getAttribute('data-id') ||
+      firstText(card,['.report-id','.card-id','[data-report-id]']) ||
+      (norm(card.textContent).match(/RPT-[A-Z0-9-]+/i)||[])[0] ||
+      ''
+    );
+    // Keep the RC-07/RC-08 favourite key compatible with the existing
+    // catalogue favourite subsystem, which stores IDs in normalized form.
+    return value.toLowerCase();
+  }
+
+  function cardName(card){
+    return norm(
+      card.dataset.reportName ||
+      card.getAttribute('data-report-name') ||
+      firstText(card,['.report-card-title','.card-title','.report-name','h1','h2','h3','h4','h5'])
+    ) || 'Report';
+  }
+
+  function extractFromText(card){
+    const raw=card.innerText || card.textContent || '';
+    const lines=raw.split(/\n+/).map(norm).filter(Boolean);
+    const all=norm(raw);
+
+    const rails=['ACH','FedNow','Fedwire','SEPA SCT','SCT Inst','SDD Core','Cross-Rail (US)'];
+    const regions=['United States','Europe','Global','APAC','North America','Middle East','Asia Pacific'];
+    const frequencies=['Daily','Weekly','Monthly','Continuous','Event-driven'];
+    const categories=['Availability Reports','Operational Reports','Reconciliation Reports','Risk Reports','Exception Reports','Compliance Reports','Audit Reports'];
+    const lifecycles=['Published','Draft','Archived'];
+    const classifications=['System','Public','Private'];
+    const owners=['Ragul K','Ananya Sharma','Sundar S','Emma Wilson','David Johnson','Priya Mehta','Sanjay Singh'];
+
+    const pick=(list)=>{
+      const found=list.find(v=>new RegExp('\\b'+v.replace(/[()]/g,'\\$&')+'\\b','i').test(all));
+      return found || '';
+    };
+
+    return {
+      rail:pick(rails),
+      region:pick(regions),
+      frequency:pick(frequencies),
+      category:pick(categories),
+      lifecycle:pick(lifecycles),
+      classification:pick(classifications),
+      owner:pick(owners)
+    };
+  }
+
+  function meta(card){
+    const extracted=extractFromText(card);
+    const activeTab=document.querySelector('#view-catalogue .tab-btn.is-active')?.dataset.tab || 'public';
+
+    let description =
+      card.dataset.description ||
+      card.getAttribute('data-description') ||
+      firstText(card,['.report-card-description','.card-description','.report-description','.description','.report-desc','.card-desc','p']);
+
+    if(!description){
+      const candidates=(card.innerText||'').split('\n').map(norm).filter(Boolean);
+      const skip=/^(RPT-|PUBLISHED$|DRAFT$|ARCHIVED$|PUBLIC$|PRIVATE$|SYSTEM$|READ MORE$|READ LESS$|ACH$|CROSS-RAIL|UNITED STATES$|EUROPE$|GLOBAL$|DAILY$|WEEKLY$|MONTHLY$|CONTINUOUS$|EVENT-DRIVEN$|EXCEPTION REPORTS$|OPERATIONAL REPORTS$|RISK REPORTS$|AVAILABILITY REPORTS$|RECONCILIATION REPORTS$|COMPLIANCE REPORTS$|AUDIT REPORTS$|Ragul K$|Ananya Sharma$|Sundar S$|Emma Wilson$|David Johnson$|Priya Mehta$|Sanjay Singh$)/i;
+      description=candidates.find(v=>v!==cardName(card) && !skip.test(v) && v.length>35) || 'Business description is available in the report repository.';
+    }
+
+    let classification =
+      card.dataset.classification || card.getAttribute('data-classification') || extracted.classification;
+    if(!classification){
+      classification=activeTab==='private' ? 'Private' : 'Public';
+    }
+
+    const lifecycle=card.dataset.lifecycle || card.getAttribute('data-lifecycle') || extracted.lifecycle || 'Published';
+    const category=card.dataset.category || card.getAttribute('data-category') || extracted.category || 'Operational Reports';
+    const rail=card.dataset.rail || card.getAttribute('data-rail') || extracted.rail || 'Not configured';
+    const region=card.dataset.region || card.getAttribute('data-region') || extracted.region || 'Not configured';
+    const frequency=card.dataset.frequency || card.getAttribute('data-frequency') || extracted.frequency || 'Not configured';
+    const owner=card.dataset.owner || card.getAttribute('data-owner') || extracted.owner || 'Not configured';
+
+    return {
+      name:cardName(card),
+      id:cardId(card)||'Not configured',
+      description,
+      classification,
+      lifecycle,
+      category,
+      rail,
+      region,
+      frequency,
+      owner
+    };
+  }
+
+  function loadFavs(){
+    try{
+      const a=JSON.parse(localStorage.getItem(FAV_KEY)||'[]');
+      return new Set(Array.isArray(a)?a.map(String):[]);
+    }catch(_){return new Set();}
+  }
+
+  function saveFavs(set){
+    localStorage.setItem(FAV_KEY,JSON.stringify(Array.from(set)));
+  }
+
+  function ensureActionGroup(card){
+    if(!card || card.classList.contains('report-grid-empty')) return;
+
+    let group=card.querySelector(':scope > .rc08-action-group');
+    if(!group){
+      group=document.createElement('div');
+      group.className='rc08-action-group';
+      group.setAttribute('aria-label','Report actions');
+      card.appendChild(group);
+    }
+
+    let star=card.querySelector('.report-favourite-btn');
+    if(star){
+      // Always clone the star before wiring the RC-08 UI. This strips any
+      // legacy click listeners that would otherwise toggle the state twice.
+      star=star.cloneNode(true);
+    }else{
+      star=document.createElement('button');
+      star.type='button';
+      star.className='report-favourite-btn';
+      star.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.56L12 17.53l-5.88 3.09 1.12-6.56-4.76-4.64 6.58-.96L12 2.5z"/></svg>';
+    }
+    if(star.parentElement) star.parentElement.replaceChild(star, star.parentElement.querySelector('.report-favourite-btn'));
+    if(star.parentElement!==group) group.appendChild(star);
+
+    let trigger=group.querySelector('.rc08-menu-trigger');
+    if(trigger){
+      // Strip any legacy direct listener. The capture-phase bridge below is
+      // the only owner of the overflow button click.
+      trigger=trigger.cloneNode(true);
+      group.replaceChild(trigger, group.querySelector('.rc08-menu-trigger'));
+    }else{
+      trigger=document.createElement('button');
+      trigger.type='button';
+      trigger.className='rc08-menu-trigger';
+      trigger.setAttribute('aria-haspopup','menu');
+      trigger.setAttribute('aria-expanded','false');
+      trigger.setAttribute('aria-label','More report actions');
+      trigger.title='More actions';
+      trigger.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>';
+      group.appendChild(trigger);
+    }
+    const favs=loadFavs();
+    const id=cardId(card);
+    const isFav=favs.has(id);
+    star.classList.toggle('is-favourite',isFav);
+    star.setAttribute('aria-label',isFav?'Unfavourite report':'Favourite report');
+    star.title=isFav?'Unfavourite':'Favourite';
+
+    // Favourite clicks are handled by the single document capture-phase
+    // RC-07/RC-08 event bridge. Do not bind another target-phase handler here.
+    delete star.dataset.rc08FavouriteBound;
+
+    const m=meta(card);
+    card.classList.add('rc07-card-ready');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('role','button');
+    card.setAttribute('aria-label','Open Report Overview for '+m.name);
+
+    // The base catalogue renderer already contains the report metadata.
+    // Do not append another metadata block; that caused duplicated Report ID,
+    // description, rail, region, frequency and owner information.
+    card.querySelectorAll('.rc07-extra,.rc07-lifecycle-chip').forEach(el=>el.remove());
+  }
+
+  function toggleFavourite(card){
+    const id=cardId(card);
+    if(!id) return;
+    const set=loadFavs();
+    if(set.has(id)){
+      set.delete(id);
+      toast('Report removed from Favourites','info');
+    }else{
+      set.add(id);
+      toast('Report added to Favourites','success');
+    }
+    saveFavs(set);
+    syncAllStars();
+
+    const activeTab=document.querySelector('#view-catalogue .tab-btn.is-active')?.dataset.tab;
+    if(activeTab==='favourites'){
+      const shouldShow=set.has(id);
+      card.style.display=shouldShow?'':'none';
+      if(!shouldShow) closeActionMenu();
+    }
+  }
+
+  function syncAllStars(){
+    const set=loadFavs();
+    cards().forEach(card=>{
+      const star=card.querySelector('.report-favourite-btn');
+      if(!star) return;
+      const fav=set.has(cardId(card));
+      star.classList.toggle('is-favourite',fav);
+      star.setAttribute('aria-label',fav?'Unfavourite report':'Favourite report');
+      star.title=fav?'Unfavourite':'Favourite';
+    });
+  }
+
+  function ensureMetadata(card,m){
+    let box=card.querySelector(':scope > .rc07-extra');
+    if(!box){
+      box=document.createElement('div');
+      box.className='rc07-extra';
+      card.appendChild(box);
+    }
+
+    const description=m.description;
+    box.innerHTML=`
+      <div class="rc07-report-id">Report ID: ${esc(m.id)}</div>
+      <div class="rc07-description is-collapsed" data-rc07-desc>${esc(description)}</div>
+      <button type="button" class="rc07-read-toggle" data-rc07-read>Read More</button>
+      <div class="rc07-metadata" aria-label="Report metadata">
+        <div class="rc07-meta-item"><span class="rc07-meta-label">Rail</span><span class="rc07-meta-value">${esc(m.rail)}</span></div>
+        <div class="rc07-meta-item"><span class="rc07-meta-label">Region</span><span class="rc07-meta-value">${esc(m.region)}</span></div>
+        <div class="rc07-meta-item"><span class="rc07-meta-label">Execution Frequency</span><span class="rc07-meta-value">${esc(m.frequency)}</span></div>
+        <div class="rc07-meta-item"><span class="rc07-meta-label">Owner</span><span class="rc07-meta-value">${esc(m.owner)}</span></div>
+      </div>`;
+
+    const btn=box.querySelector('[data-rc07-read]');
+    const desc=box.querySelector('[data-rc07-desc]');
+    btn.addEventListener('click',e=>{
+      e.preventDefault(); e.stopPropagation();
+      const collapsed=desc.classList.toggle('is-collapsed');
+      btn.textContent=collapsed?'Read More':'Read Less';
+      btn.setAttribute('aria-expanded',String(!collapsed));
+    });
+  }
+
+  function ensureLifecycle(card,m){
+    let chip=card.querySelector(':scope > .rc07-lifecycle-chip');
+    if(!chip){
+      chip=document.createElement('span');
+      chip.className='rc07-lifecycle-chip';
+      card.appendChild(chip);
+    }
+    chip.textContent=m.lifecycle;
+    chip.setAttribute('aria-label','Lifecycle: '+m.lifecycle);
+  }
+
+  function ensurePortalMenu(){
+    if(document.getElementById('rc08PortalMenu')) return;
+    const menu=document.createElement('div');
+    menu.id='rc08PortalMenu';
+    menu.setAttribute('role','menu');
+    menu.innerHTML=`
+      <button type="button" class="rc08-menu-item" data-action="preview" role="menuitem"><span class="rc08-menu-icon">◉</span>Preview</button>
+      <button type="button" class="rc08-menu-item" data-action="execute" role="menuitem"><span class="rc08-menu-icon">▶</span>Execute</button>
+      <button type="button" class="rc08-menu-item" data-action="schedule" role="menuitem"><span class="rc08-menu-icon">◷</span>Schedule</button>
+      <div class="rc08-menu-divider"></div>
+      <button type="button" class="rc08-menu-item" data-action="clone" role="menuitem"><span class="rc08-menu-icon">□</span>Clone</button>
+      <button type="button" class="rc08-menu-item" data-action="edit" role="menuitem"><span class="rc08-menu-icon">✎</span>Edit</button>
+      <div class="rc08-menu-divider"></div>
+      <button type="button" class="rc08-menu-item" data-action="details" role="menuitem"><span class="rc08-menu-icon">ⓘ</span>View Details</button>
+      <button type="button" class="rc08-menu-item danger" data-action="favourite" role="menuitem"><span class="rc08-menu-icon">☆</span><span data-favourite-label>Favourite</span></button>
+    `;
+    document.body.appendChild(menu);
+
+    // Menu clicks are handled by the single RC-07/RC-08 capture-phase bridge below.
+
+    menu.addEventListener('keydown',e=>{
+      if(e.key==='Escape'){
+        e.preventDefault();
+        closeActionMenu();
+        menuTrigger?.focus();
+      }
+    });
+  }
+
+  function positionMenu(trigger){
+    const menu=document.getElementById('rc08PortalMenu');
+    if(!menu) return;
+    menu.classList.add('is-open');
+    menu.style.visibility='hidden';
+    menu.style.left='0px';
+    menu.style.top='0px';
+
+    const r=trigger.getBoundingClientRect();
+    const mw=menu.offsetWidth;
+    const mh=menu.offsetHeight;
+    const gap=6;
+    let left=r.right-mw;
+    let top=r.bottom+gap;
+
+    if(left<10) left=10;
+    if(left+mw>window.innerWidth-10) left=window.innerWidth-mw-10;
+
+    if(top+mh>window.innerHeight-10){
+      top=r.top-mh-gap;
+    }
+    if(top<10) top=10;
+
+    menu.style.left=Math.round(left)+'px';
+    menu.style.top=Math.round(top)+'px';
+    menu.style.visibility='visible';
+  }
+
+  function openActionMenu(card,trigger){
+    ensurePortalMenu();
+    const menu=document.getElementById('rc08PortalMenu');
+    if(activeCard===card && menu.classList.contains('is-open')){
+      closeActionMenu();
+      return;
+    }
+    activeCard=card;
+    menuTrigger=trigger;
+
+    const m=meta(card);
+    const isFav=loadFavs().has(cardId(card));
+    const isSystem=m.classification.toLowerCase()==='system';
+    const owner=(m.owner||'').toLowerCase();
+    const canEdit=!isSystem && (
+      owner===CURRENT_USER.toLowerCase() ||
+      CURRENT_ROLE.toLowerCase().includes('administrator')
+    );
+
+    menu.querySelector('[data-action="edit"]').disabled=!canEdit;
+    menu.querySelector('[data-action="edit"]').title=canEdit?'Edit report':'Edit available only to owner or administrator';
+    menu.querySelector('[data-favourite-label]').textContent=isFav?'Unfavourite':'Favourite';
+    menu.querySelector('[data-action="favourite"] .rc08-menu-icon').textContent=isFav?'★':'☆';
+
+    trigger.setAttribute('aria-expanded','true');
+    positionMenu(trigger);
+
+    setTimeout(()=>{
+      menu.querySelector('.rc08-menu-item:not([disabled])')?.focus();
+    },0);
+  }
+
+  function closeActionMenu(){
+    const menu=document.getElementById('rc08PortalMenu');
+    if(menu) menu.classList.remove('is-open');
+    if(menuTrigger) menuTrigger.setAttribute('aria-expanded','false');
+    activeCard=null;
+    menuTrigger=null;
+  }
+
+  function ensureOverview(){
+    if(document.getElementById('rc07OverviewPanel')) return;
+    const el=document.createElement('div');
+    el.id='rc07OverviewPanel';
+    el.innerHTML=`
+      <div class="rc07-overview" role="dialog" aria-modal="true" aria-labelledby="rc07OverviewTitle">
+        <div class="rc07-overview-head">
+          <div class="rc07-overview-head-main">
+            <h2 id="rc07OverviewTitle">Report Overview</h2>
+            <div id="rc07OverviewId" style="margin-top:4px;color:#8995aa;font-size:11px;"></div>
+          </div>
+          <button type="button" class="rc08-close" data-close-overview aria-label="Close">×</button>
+        </div>
+        <div class="rc07-overview-body">
+          <p class="rc07-overview-description" id="rc07OverviewDescription"></p>
+          <div class="rc07-overview-grid" id="rc07OverviewGrid"></div>
+        </div>
+        <div class="rc07-overview-footer">
+          <button type="button" class="rc08-btn" data-close-overview>Close</button>
+          <button type="button" class="rc08-btn primary" data-open-workspace>Open Report Workspace</button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    // Interactions are handled by the single capture-phase RC-07/RC-08 bridge.
+  }
+
+  let activeCardForOverview=null;
+
+  function openOverview(card){
+    ensureOverview();
+    activeCardForOverview=card;
+    const m=meta(card);
+    document.getElementById('rc07OverviewTitle').textContent=m.name;
+    document.getElementById('rc07OverviewId').textContent='Report ID: '+m.id;
+    document.getElementById('rc07OverviewDescription').textContent=m.description;
+
+    const fields=[
+      ['Classification',m.classification],
+      ['Lifecycle',m.lifecycle],
+      ['Category',m.category],
+      ['Payment Rail',m.rail],
+      ['Region',m.region],
+      ['Execution Frequency',m.frequency],
+      ['Owner',m.owner]
+    ];
+    document.getElementById('rc07OverviewGrid').innerHTML=fields.map(([l,v])=>
+      `<div class="rc07-overview-item"><span class="label">${esc(l)}</span><span class="value">${esc(v)}</span></div>`
+    ).join('');
+
+    document.getElementById('rc07OverviewPanel').classList.add('is-open');
+  }
+
+  function closeOverview(){
+    document.getElementById('rc07OverviewPanel')?.classList.remove('is-open');
+    activeCardForOverview=null;
+  }
+
+  function ensureWorkspace(){
+    if(document.getElementById('rc08WorkspaceOverlay')) return;
+    const el=document.createElement('div');
+    el.id='rc08WorkspaceOverlay';
+    el.innerHTML=`
+      <div class="rc08-workspace" role="dialog" aria-modal="true" aria-labelledby="rc08WorkspaceTitle">
+        <div class="rc08-workspace-head">
+          <div class="rc08-workspace-head-main">
+            <h2 id="rc08WorkspaceTitle">Report Workspace</h2>
+            <div class="rc08-workspace-sub" id="rc08WorkspaceSub"></div>
+          </div>
+          <button type="button" class="rc08-close" data-workspace-close aria-label="Close workspace">×</button>
+        </div>
+        <div class="rc08-workspace-body" id="rc08WorkspaceBody"></div>
+        <div class="rc08-workspace-footer" id="rc08WorkspaceFooter"></div>
+      </div>`;
+    document.body.appendChild(el);
+    // Interactions are handled by the single capture-phase RC-07/RC-08 bridge.
+  }
+
+  let activeWorkspaceCard=null;
+  let activeWorkspaceMode='preview';
+
+  function openWorkspace(mode,card){
+    ensureWorkspace();
+    activeWorkspaceCard=card;
+    activeWorkspaceMode=mode;
+    const m=meta(card);
+
+    document.getElementById('rc08WorkspaceTitle').textContent=
+      mode==='preview'?'Preview Report':
+      mode==='execute'?'Execute Report':
+      mode==='schedule'?'Schedule Report':
+      mode==='clone'?'Clone Report':
+      'Edit Report';
+
+    document.getElementById('rc08WorkspaceSub').textContent=
+      m.name+' • '+m.id+' • '+mode.charAt(0).toUpperCase()+mode.slice(1);
+
+    const body=document.getElementById('rc08WorkspaceBody');
+    const footer=document.getElementById('rc08WorkspaceFooter');
+
+    if(mode==='preview'){
+      body.innerHTML=`
+        <div class="rc08-workspace-grid">
+          <div class="rc08-field full"><span class="rc08-label">Description</span><span class="rc08-value">${esc(m.description)}</span></div>
+          <div class="rc08-field"><span class="rc08-label">Classification</span><span class="rc08-value">${esc(m.classification)}</span></div>
+          <div class="rc08-field"><span class="rc08-label">Lifecycle</span><span class="rc08-value">${esc(m.lifecycle)}</span></div>
+          <div class="rc08-field"><span class="rc08-label">Category</span><span class="rc08-value">${esc(m.category)}</span></div>
+          <div class="rc08-field"><span class="rc08-label">Rail</span><span class="rc08-value">${esc(m.rail)}</span></div>
+          <div class="rc08-field"><span class="rc08-label">Region</span><span class="rc08-value">${esc(m.region)}</span></div>
+          <div class="rc08-field"><span class="rc08-label">Execution Frequency</span><span class="rc08-value">${esc(m.frequency)}</span></div>
+          <div class="rc08-field"><span class="rc08-label">Owner</span><span class="rc08-value">${esc(m.owner)}</span></div>
+        </div>`;
+      footer.innerHTML=`<button class="rc08-btn" data-workspace-close>Close</button><button class="rc08-btn primary" data-workspace-action="execute">Execute Report</button>`;
+    }
+
+    if(mode==='execute'){
+      body.innerHTML=`
+        <div class="rc08-execution-card">
+          <div class="rc08-report-banner">
+            <span class="rc08-report-banner-icon">▱</span>
+            <span>${esc(m.name)}</span>
+          </div>
+          <div class="rc08-field">
+            <label class="rc08-label" for="rc08ExecutionFrequency">Execution Frequency</label>
+            <select id="rc08ExecutionFrequency">
+              <option>One-time (Ad Hoc)</option><option>Daily</option><option>Weekly</option><option>Monthly</option>
+            </select>
+          </div>
+          <div class="rc08-field">
+            <label class="rc08-label required" for="rc08ReportingPeriod">Reporting Period</label>
+            <select id="rc08ReportingPeriod">
+              <option>Today (Live)</option><option>Yesterday</option><option>Last 7 Days</option><option>Last 30 Days</option>
+            </select>
+          </div>
+          <div class="rc08-field">
+            <label class="rc08-label" for="rc08OutputFormat">Output Format</label>
+            <select id="rc08OutputFormat">
+              <option>CSV Export</option><option>Excel</option><option>PDF</option><option>JSON</option>
+            </select>
+          </div>
+          <div class="rc08-execution-note">Execution requires explicit confirmation. Selecting Execute from the card never runs the report automatically.</div>
+        </div>`;
+      footer.innerHTML=`<button class="rc08-btn" data-workspace-close>Cancel</button><button class="rc08-btn primary" data-workspace-action="confirm-execute">▷&nbsp; Execute Now</button>`;
+    }
+
+    if(mode==='schedule'){
+      body.innerHTML=`
+        <div class="rc08-workspace-grid">
+          <div class="rc08-field full"><span class="rc08-label">Report</span><span class="rc08-value">${esc(m.name)} (${esc(m.id)})</span></div>
+          <div class="rc08-field"><label class="rc08-label required" for="rc08ScheduleFrequency">Schedule Frequency</label><select id="rc08ScheduleFrequency"><option>Daily</option><option>Weekly</option><option>Monthly</option></select></div>
+          <div class="rc08-field"><label class="rc08-label required" for="rc08ScheduleDate">Start Date</label><input id="rc08ScheduleDate" type="date"></div>
+          <div class="rc08-field full"><label class="rc08-label" for="rc08ScheduleOutput">Output Format</label><select id="rc08ScheduleOutput"><option>CSV Export</option><option>Excel</option><option>PDF</option></select></div>
+        </div>`;
+      footer.innerHTML=`<button class="rc08-btn" data-workspace-close>Cancel</button><button class="rc08-btn primary" data-workspace-action="confirm-schedule">Save Schedule</button>`;
+    }
+
+    if(mode==='clone'){
+      body.innerHTML=`
+        <div class="rc08-workspace-grid">
+          <div class="rc08-field full"><label class="rc08-label">Clone Name</label><input id="rc08CloneName" value="${esc(m.name+' - Copy')}"></div>
+          <div class="rc08-field"><span class="rc08-label">Source Report</span><span class="rc08-value">${esc(m.id)}</span></div>
+          <div class="rc08-field"><span class="rc08-label">Owner</span><span class="rc08-value">${esc(CURRENT_USER)}</span></div>
+        </div>`;
+      footer.innerHTML=`<button class="rc08-btn" data-workspace-close>Cancel</button><button class="rc08-btn primary" data-workspace-action="confirm-clone">Create Clone</button>`;
+    }
+
+    if(mode==='edit'){
+      body.innerHTML=`
+        <div class="rc08-workspace-grid">
+          <div class="rc08-field full"><label class="rc08-label">Report Name</label><input id="rc08EditName" value="${esc(m.name)}"></div>
+          <div class="rc08-field full"><label class="rc08-label">Description</label><textarea id="rc08EditDescription">${esc(m.description)}</textarea></div>
+          <div class="rc08-field"><label class="rc08-label">Category</label><select id="rc08EditCategory"><option>${esc(m.category)}</option><option>Availability Reports</option><option>Operational Reports</option><option>Exception Reports</option><option>Risk Reports</option></select></div>
+          <div class="rc08-field"><label class="rc08-label">Frequency</label><select id="rc08EditFrequency"><option>${esc(m.frequency)}</option><option>Daily</option><option>Weekly</option><option>Monthly</option><option>Continuous</option></select></div>
+        </div>`;
+      footer.innerHTML=`<button class="rc08-btn" data-workspace-close>Cancel</button><button class="rc08-btn primary" data-workspace-action="save-edit">Save Changes</button>`;
+    }
+
+    document.getElementById('rc08WorkspaceOverlay')?.classList.add('is-open');
+  }
+
+  function closeWorkspace(){
+    document.getElementById('rc08WorkspaceOverlay')?.classList.remove('is-open');
+    activeWorkspaceCard=null;
+  }
+
+  function completeWorkspaceAction(action,card){
+    const m=meta(card);
+
+    if(action==='execute'){
+      openWorkspace('execute',card);
+      return;
+    }
+
+    if(action==='confirm-execute'){
+      const freq=document.getElementById('rc08ExecutionFrequency')?.value || 'One-time (Ad Hoc)';
+      const period=document.getElementById('rc08ReportingPeriod')?.value || 'Today (Live)';
+      const format=document.getElementById('rc08OutputFormat')?.value || 'CSV Export';
+      toast('Execution started: '+m.name+' • '+period+' • '+format,'success');
+      closeWorkspace();
+      return;
+    }
+
+    if(action==='confirm-schedule'){
+      const freq=document.getElementById('rc08ScheduleFrequency')?.value || 'Daily';
+      const date=document.getElementById('rc08ScheduleDate')?.value;
+      if(!date){ toast('Please select a start date','error'); return; }
+      const format=document.getElementById('rc08ScheduleOutput')?.value || 'CSV Export';
+      toast('Schedule saved: '+freq+' from '+date+' • '+format,'success');
+      closeWorkspace();
+      return;
+    }
+
+    if(action==='confirm-clone'){
+      const name=document.getElementById('rc08CloneName')?.value.trim() || (m.name+' - Copy');
+      const clone=card.cloneNode(true);
+      clone.dataset.reportId=m.id+'-CLONE';
+      clone.dataset.reportName=name;
+      clone.classList.remove('rc07-card-ready');
+      clone.dataset.reportId=m.id+'-CLONE';
+      clone.dataset.reportName=name;
+      clone.dataset.classification=m.classification;
+      clone.dataset.lifecycle='Draft';
+      clone.dataset.category=m.category;
+      clone.dataset.rail=m.rail;
+      clone.dataset.region=m.region;
+      clone.dataset.frequency=m.frequency;
+      clone.dataset.owner=CURRENT_USER;
+      clone.dataset.description=m.description;
+      clone.querySelectorAll('.rc07-extra,.rc07-lifecycle-chip,.rc08-action-group').forEach(el=>el.remove());
+      const title=clone.querySelector('.report-card-title,.card-title,.report-name,h1,h2,h3,h4,h5');
+      if(title) title.textContent=name;
+      const grid=document.getElementById('catalogueGrid');
+      if(grid) grid.insertBefore(clone,grid.firstChild);
+      toast('Clone created: '+name,'success');
+      closeWorkspace();
+      setTimeout(enhanceAll,50);
+      return;
+    }
+
+    if(action==='save-edit'){
+      const name=document.getElementById('rc08EditName')?.value.trim();
+      const desc=document.getElementById('rc08EditDescription')?.value.trim();
+      if(name){
+        const title=card.querySelector('.report-card-title,.card-title,.report-name,h1,h2,h3,h4,h5');
+        if(title) title.textContent=name;
+        card.dataset.reportName=name;
+      }
+      if(desc) card.dataset.description=desc;
+      // Keep the original card metadata only. Never append a second metadata panel.
+      card.querySelectorAll('.rc07-extra,.rc07-lifecycle-chip').forEach(el=>el.remove());
+      toast('Report changes saved','success');
+      closeWorkspace();
+      return;
+    }
+  }
+
+  function canEdit(card){
+    const m=meta(card);
+    return m.classification.toLowerCase()!=='system' &&
+      (m.owner.toLowerCase()===CURRENT_USER.toLowerCase() ||
+       CURRENT_ROLE.toLowerCase().includes('administrator'));
+  }
+
+  function runAction(action,card){
+    if(action==='preview'){
+      openWorkspace('preview',card);
+    }else if(action==='execute'){
+      openWorkspace('execute',card);
+    }else if(action==='schedule'){
+      openWorkspace('schedule',card);
+    }else if(action==='clone'){
+      openWorkspace('clone',card);
+    }else if(action==='edit'){
+      if(canEdit(card)) openWorkspace('edit',card);
+      else toast('Edit is available only to the report owner or administrator','error');
+    }else if(action==='details'){
+      openOverview(card);
+    }else if(action==='favourite'){
+      toggleFavourite(card);
+    }
+  }
+
+  function enhanceCard(card){
+    if(!card || card.classList.contains('report-grid-empty')) return;
+    ensureActionGroup(card);
+  }
+
+  function enhanceAll(){
+    cards().forEach(enhanceCard);
+    syncAllStars();
+  }
+
+  function handleCardActivation(card){
+    if(!card || card.classList.contains('report-grid-empty')) return;
+    openOverview(card);
+  }
+
+  document.addEventListener('click',e=>{
+    const target=e.target;
+
+    if(target.closest('.rc08-action-group,.rc08-menu-trigger,.report-favourite-btn,.rc08PortalMenu,#rc07OverviewPanel,#rc08WorkspaceOverlay,[data-rc07-read],[data-workspace-action]')){
+      return;
+    }
+
+    const card=target.closest('#catalogueGrid > *');
+    if(card && !card.classList.contains('report-grid-empty')){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      handleCardActivation(card);
+    }
+
+    const menu=document.getElementById('rc08PortalMenu');
+    if(menu?.classList.contains('is-open') && !target.closest('#rc08PortalMenu')){
+      closeActionMenu();
+    }
+  },true);
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      closeActionMenu();
+      closeOverview();
+      closeWorkspace();
+      return;
+    }
+    const card=e.target.closest('#catalogueGrid > .rc07-card-ready');
+    if(card && e.target===card && (e.key==='Enter'||e.key===' ')){
+      e.preventDefault();
+      handleCardActivation(card);
+    }
+  });
+
+  window.addEventListener('resize',()=>{
+    if(menuTrigger && document.getElementById('rc08PortalMenu')?.classList.contains('is-open')){
+      positionMenu(menuTrigger);
+    }
+  });
+
+  window.addEventListener('scroll',()=>{
+    if(menuTrigger && document.getElementById('rc08PortalMenu')?.classList.contains('is-open')){
+      positionMenu(menuTrigger);
+    }
+  },true);
+
+
+  /* ============================================================
+     FINAL EVENT BRIDGE
+     The original application contains several document/card listeners.
+     Handle RC-07/RC-08 controls in capture phase so those legacy
+     listeners cannot cancel or double-toggle these actions.
+     ============================================================ */
+  document.addEventListener('click', function rc07rc08EventBridge(event){
+    const target = event.target instanceof Element ? event.target : null;
+    if(!target) return;
+
+    // Favourite button: one click = one state change.
+    const star = target.closest('#catalogueGrid .report-favourite-btn');
+    if(star){
+      const card = star.closest('#catalogueGrid > *');
+      if(card){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        toggleFavourite(card);
+      }
+      return;
+    }
+
+    // Three-dot trigger: always open the portal menu from the trigger.
+    const trigger = target.closest('#catalogueGrid .rc08-menu-trigger');
+    if(trigger){
+      const card = trigger.closest('#catalogueGrid > *');
+      if(card){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        openActionMenu(card, trigger);
+      }
+      return;
+    }
+
+    // Portal menu actions: run immediately and do not let legacy handlers
+    // close/cancel the menu before runAction receives the selected action.
+    const menuItem = target.closest('#rc08PortalMenu .rc08-menu-item');
+    if(menuItem && !menuItem.disabled){
+      if(!activeCard) return;
+      const card = activeCard;
+      const action = menuItem.dataset.action;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeActionMenu();
+      runAction(action, card);
+      return;
+    }
+
+    // Read More / Read Less is handled directly here so card navigation
+    // cannot consume the click first.
+    const readBtn = target.closest('#catalogueGrid [data-rc07-read], #catalogueGrid button, #catalogueGrid a');
+    if(readBtn && /^(read more|read less)$/i.test((readBtn.textContent||'').trim())){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const card=readBtn.closest('#catalogueGrid > *');
+      if(card){
+        const desc = card.querySelector('.report-card-description,.card-description,.report-description,.description,.report-desc,.card-desc,[data-description]');
+        if(desc){
+          const expanded=card.classList.toggle('rc07-description-expanded');
+          desc.classList.toggle('is-expanded',expanded);
+          readBtn.textContent=expanded?'Read Less':'Read More';
+          readBtn.setAttribute('aria-expanded',String(expanded));
+        } else {
+          // Fallback for the enhanced version if a description block exists.
+          const extra=card.querySelector('.rc07-extra');
+          const extraDesc=extra?.querySelector('[data-rc07-desc]');
+          if(extraDesc){
+            const collapsed=extraDesc.classList.toggle('is-collapsed');
+            readBtn.textContent=collapsed?'Read More':'Read Less';
+            readBtn.setAttribute('aria-expanded',String(!collapsed));
+          }
+        }
+      }
+      return;
+    }
+
+    // Workspace buttons are also captured here so Execute/Schedule/Clone/Edit
+    // completion cannot be intercepted by application-wide modal handlers.
+    const workspaceAction = target.closest('#rc08WorkspaceOverlay [data-workspace-action]');
+    if(workspaceAction && activeWorkspaceCard){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      completeWorkspaceAction(workspaceAction.dataset.workspaceAction, activeWorkspaceCard);
+      return;
+    }
+
+    const workspaceClose = target.closest('#rc08WorkspaceOverlay [data-workspace-close]');
+    if(workspaceClose){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeWorkspace();
+      return;
+    }
+
+    const overviewOpen = target.closest('#rc07OverviewPanel [data-open-workspace]');
+    if(overviewOpen && activeCardForOverview){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const card = activeCardForOverview;
+      closeOverview();
+      openWorkspace('preview', card);
+      return;
+    }
+
+    const overviewClose = target.closest('#rc07OverviewPanel [data-close-overview]');
+    if(overviewClose){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      closeOverview();
+      return;
+    }
+  }, true);
+
+  function init(){
+    ensurePortalMenu();
+    ensureOverview();
+    ensureWorkspace();
+
+    const grid=document.getElementById('catalogueGrid');
+    if(!grid) return;
+
+    const observer=new MutationObserver(()=>{
+      requestAnimationFrame(enhanceAll);
+    });
+    observer.observe(grid,{childList:true});
+
+    [0,100,300,700,1200,2000].forEach(ms=>setTimeout(enhanceAll,ms));
+    enhanceAll();
+  }
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',init);
+  }else{
+    init();
+  }
+})();
+</script>
+
+
+<style id="rc07-rc08-last-visual-fix">
+/* FINAL: one authoritative favourite button, no legacy positioning */
+#catalogueGrid .rc07-card-ready .rc08-action-group{
+  position:absolute!important;
+  top:12px!important;
+  right:12px!important;
+  z-index:999!important;
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  width:auto!important;
+  height:36px!important;
+  margin:0!important;
+  padding:0!important;
+}
+#catalogueGrid .rc07-card-ready .rc08-action-group > .report-favourite-btn,
+#catalogueGrid .rc07-card-ready .rc08-action-group > .rc08-menu-trigger{
+  position:relative!important;
+  inset:auto!important;
+  float:none!important;
+  flex:0 0 34px!important;
+  width:34px!important;
+  min-width:34px!important;
+  max-width:34px!important;
+  height:34px!important;
+  min-height:34px!important;
+  max-height:34px!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:1px solid #d5dce7!important;
+  border-radius:8px!important;
+  background:#fff!important;
+  color:#172b4d!important;
+  cursor:pointer!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#catalogueGrid .rc07-card-ready .rc08-action-group > .report-favourite-btn.is-favourite{
+  color:#b7791f!important;
+  background:#fff8e7!important;
+  border-color:#d9b85c!important;
+}
+#catalogueGrid .rc07-card-ready .rc08-action-group svg{
+  width:17px!important;
+  height:17px!important;
+  pointer-events:none!important;
+}
+
+/* Absolutely remove enhancement-generated duplicate metadata. */
+#catalogueGrid .rc07-card-ready .rc07-extra,
+#catalogueGrid .rc07-card-ready .rc07-lifecycle-chip{
+  display:none!important;
+}
+
+/* Strong, isolated styling for the execution modal buttons. */
+#runReportModal.modal-overlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:2147483646!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#runReportModal.modal-overlay .modal{
+  width:540px!important;
+  max-width:calc(100vw - 32px)!important;
+  margin:0!important;
+  border-radius:12px!important;
+  overflow:hidden!important;
+  background:#fff!important;
+}
+#runReportModal.modal-overlay .modal-footer{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+  width:100%!important;
+  min-height:92px!important;
+  padding:18px 26px!important;
+  box-sizing:border-box!important;
+  background:#f7f8fa!important;
+  border-top:1px solid #e3e7ee!important;
+}
+#runReportModal.modal-overlay .modal-footer > button.btn{
+  position:relative!important;
+  display:inline-flex!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  height:46px!important;
+  min-height:46px!important;
+  width:auto!important;
+  min-width:96px!important;
+  margin:0!important;
+  padding:0 22px!important;
+  box-sizing:border-box!important;
+  border-radius:8px!important;
+  font-family:inherit!important;
+  font-size:14px!important;
+  line-height:1!important;
+  font-weight:700!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+  cursor:pointer!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+#runReportModal.modal-overlay .modal-footer > button.btn.btn-secondary{
+  background:#fff!important;
+  color:#1d2d49!important;
+  border:1px solid #cbd3df!important;
+  box-shadow:none!important;
+}
+#runReportModal.modal-overlay .modal-footer > button.btn.btn-primary{
+  min-width:168px!important;
+  background:#172b4d!important;
+  color:#fff!important;
+  border:1px solid #172b4d!important;
+  box-shadow:0 2px 4px rgba(23,43,77,.16)!important;
+}
+#runReportModal.modal-overlay .modal-footer > button.btn.btn-secondary:hover{
+  background:#f7f9fc!important;
+}
+#runReportModal.modal-overlay .modal-footer > button.btn.btn-primary:hover{
+  background:#243b63!important;
+  border-color:#243b63!important;
+}
+#runReportModal.modal-overlay .modal-footer > button.btn svg{
+  width:18px!important;
+  height:18px!important;
+  flex:0 0 18px!important;
+  pointer-events:none!important;
+}
+
+/* Keep RC-08 workspace action buttons equally isolated. */
+#rc08WorkspaceOverlay .rc08-workspace-footer{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:12px!important;
+}
+#rc08WorkspaceOverlay .rc08-workspace-footer .rc08-btn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  height:46px!important;
+  min-height:46px!important;
+  width:auto!important;
+  min-width:100px!important;
+  margin:0!important;
+  padding:0 20px!important;
+  border-radius:8px!important;
+  font-family:inherit!important;
+  font-size:14px!important;
+  font-weight:700!important;
+  cursor:pointer!important;
+  box-sizing:border-box!important;
+}
+#rc08WorkspaceOverlay .rc08-workspace-footer .rc08-btn.primary{
+  background:#172b4d!important;
+  color:#fff!important;
+  border:1px solid #172b4d!important;
+}
+</style>
+
+<script id="rc07-rc08-final-consolidated-fix">
+(function(){
+  'use strict';
+
+  const FAV_KEY='vpiLiteFavouriteReports';
+
+  function getCards(){
+    const grid=document.getElementById('catalogueGrid');
+    return grid ? Array.from(grid.children).filter(c=>!c.classList.contains('report-grid-empty') && !c.classList.contains('rc13-loading')) : [];
+  }
+
+  function cardId(card){
+    return String(
+      card?.dataset?.reportId ||
+      card?.getAttribute?.('data-report-id') ||
+      card?.dataset?.id ||
+      card?.getAttribute?.('data-id') ||
+      card?.querySelector?.('[data-report-id]')?.getAttribute('data-report-id') ||
+      card?.querySelector?.('.report-id')?.textContent ||
+      card?.querySelector?.('.report-card-title,.card-title,.report-name,h1,h2,h3,h4,h5')?.textContent ||
+      ''
+    ).trim().replace(/\s+/g,' ').toLowerCase();
+  }
+
+  function loadFavs(){
+    try{
+      const v=JSON.parse(localStorage.getItem(FAV_KEY)||'[]');
+      return new Set(Array.isArray(v)?v.map(String):[]);
+    }catch(e){ return new Set(); }
+  }
+
+  function saveFavs(set){
+    localStorage.setItem(FAV_KEY,JSON.stringify(Array.from(set)));
+  }
+
+  function toast(msg,type){
+    if(typeof window.showToast==='function') window.showToast(msg,type||'success');
+    else if(window.VP?.ui?.toast) VP.ui.toast(type||'success',msg,'');
+  }
+
+  function renderStar(star,fav){
+    const html=fav
+      ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.56L12 17.53l-5.88 3.09 1.12-6.56-4.76-4.64 6.58-.96L12 2.5z"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.56L12 17.53l-5.88 3.09 1.12-6.56-4.76-4.64 6.58-.96L12 2.5z"/></svg>';
+    star.classList.toggle('is-favourite',fav);
+    star.setAttribute('aria-pressed',String(fav));
+    star.setAttribute('aria-label',fav?'Unfavourite report':'Favourite report');
+    star.setAttribute('title',fav?'Unfavourite':'Favourite');
+    if(star.innerHTML !== html) star.innerHTML=html;
+  }
+  function bindStar(card,star){
+    // Intentionally empty. The single document capture-phase bridge owns favourite clicks.
+  }
+
+  function cleanCard(card){
+    if(!card || card.classList.contains('report-grid-empty')) return;
+
+    // Remove ALL duplicate metadata generated by previous RC-07 layers.
+    card.querySelectorAll('.rc07-extra,.rc07-lifecycle-chip').forEach(el=>el.remove());
+
+    let group=card.querySelector(':scope > .rc08-action-group');
+    if(!group){
+      group=document.createElement('div');
+      group.className='rc08-action-group';
+      group.setAttribute('aria-label','Report actions');
+      card.appendChild(group);
+    }
+
+    let star=group.querySelector(':scope > .report-favourite-btn');
+    if(!star){
+      // Remove stray legacy stars before creating the single authoritative one.
+      card.querySelectorAll('.report-favourite-btn').forEach(el=>el.remove());
+      star=document.createElement('button');
+      star.type='button';
+      star.className='report-favourite-btn';
+      star.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.56L12 17.53l-5.88 3.09 1.12-6.56-4.76-4.64 6.58-.96L12 2.5z"/></svg>';
+      group.insertBefore(star,group.firstChild);
+    }
+
+    // Ensure only one star exists in the card.
+    card.querySelectorAll('.report-favourite-btn').forEach(el=>{
+      if(el!==star) el.remove();
+    });
+
+    const set=loadFavs();
+    renderStar(star,set.has(cardId(card)));
+    bindStar(card,star);
+  }
+
+  function cleanAll(){
+    getCards().forEach(cleanCard);
+
+    // Re-apply button styling to the execution modal whenever it exists.
+    const modal=document.getElementById('runReportModal');
+    if(modal){
+      const footer=modal.querySelector('.modal-footer');
+      const buttons=footer ? Array.from(footer.querySelectorAll('button')) : [];
+      buttons.forEach((b,i)=>{
+        b.style.setProperty('display','inline-flex','important');
+        b.style.setProperty('align-items','center','important');
+        b.style.setProperty('justify-content','center','important');
+        b.style.setProperty('height','46px','important');
+        b.style.setProperty('min-height','46px','important');
+        b.style.setProperty('margin','0','important');
+        b.style.setProperty('padding','0 22px','important');
+        b.style.setProperty('border-radius','8px','important');
+        b.style.setProperty('font-weight','700','important');
+        b.style.setProperty('cursor','pointer','important');
+        if(i===0){
+          b.style.setProperty('background','#fff','important');
+          b.style.setProperty('color','#1d2d49','important');
+          b.style.setProperty('border','1px solid #cbd3df','important');
+        }else{
+          b.style.setProperty('background','#172b4d','important');
+          b.style.setProperty('color','#fff','important');
+          b.style.setProperty('border','1px solid #172b4d','important');
+        }
+      });
+    }
+  }
+
+  function syncFavouriteTab(){
+    const tab=document.querySelector('#view-catalogue .tab-btn.is-active')?.dataset.tab;
+    const set=loadFavs();
+    getCards().forEach(card=>{
+      if(card.dataset.rcFinalFavouriteHidden==='true'){
+        if(tab!=='favourites') delete card.dataset.rcFinalFavouriteHidden;
+        else return;
+      }
+      if(tab==='favourites'){
+        const show=set.has(cardId(card));
+        card.dataset.rcFinalFavouriteVisible=String(show);
+        // Let pagination remain responsible for page visibility.
+        if(!show){
+          card.dataset.rc13FilteredVisible='false';
+          card.style.display='none';
+        }
+      }else if(card.dataset.rcFinalFavouriteVisible){
+        delete card.dataset.rcFinalFavouriteVisible;
+        if(card.dataset.rc13FilteredVisible==='false') delete card.dataset.rc13FilteredVisible;
+      }
+    });
+  }
+
+  function init(){
+    cleanAll();
+    syncFavouriteTab();
+
+    document.querySelectorAll('#view-catalogue .tab-btn').forEach(tab=>{
+      if(tab.dataset.rcFinalTabBound==='1') return;
+      tab.dataset.rcFinalTabBound='1';
+      tab.addEventListener('click',function(){
+        setTimeout(()=>{
+          cleanAll();
+          syncFavouriteTab();
+        },60);
+      });
+    });
+
+    const grid=document.getElementById('catalogueGrid');
+    if(grid){
+      const observer=new MutationObserver(()=>{
+        // Avoid replacing the active star; only clean actual duplicate nodes.
+        requestAnimationFrame(()=>{
+          cleanAll();
+          syncFavouriteTab();
+        });
+      });
+      observer.observe(grid,{childList:true,subtree:true});
+    }
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+</script>
+
+
+<script id="rc07-story-final-runtime">
+(function(){
+  'use strict';
+  const LIFE=/^(Published|Draft|Archived)$/i;
+
+  function cards(){
+    const grid=document.getElementById('catalogueGrid');
+    return grid ? Array.from(grid.children).filter(c=>!c.classList.contains('report-grid-empty')&&!c.classList.contains('rc13-loading')) : [];
+  }
+  function text(el){return (el?.textContent||'').replace(/\s+/g,' ').trim();}
+  function lifecycleFor(card){
+    const explicit=card.dataset.lifecycle||card.getAttribute('data-lifecycle');
+    if(explicit && LIFE.test(explicit)) return explicit;
+    const found=Array.from(card.querySelectorAll('span,div,p,strong,b,label')).find(el=>LIFE.test(text(el)) && text(el).length<20);
+    return found ? text(found) : 'Published';
+  }
+  function placeLifecycle(card){
+    if(!card || card.classList.contains('report-grid-empty')) return;
+    card.querySelectorAll('.rc07-story-lifecycle').forEach((x,i)=>{if(i>0)x.remove();});
+    let badge=card.querySelector('.rc07-story-lifecycle');
+    const life=lifecycleFor(card);
+
+    // Hide legacy lifecycle labels, except our authoritative badge.
+    card.querySelectorAll('span,div,p,strong,b,label').forEach(el=>{
+      if(el===badge) return;
+      if(LIFE.test(text(el)) && text(el).length<20){
+        el.classList.add('rc07-story-legacy-lifecycle');
+      }
+    });
+
+    if(!badge){
+      badge=document.createElement('span');
+      badge.className='rc07-story-lifecycle';
+    }
+    badge.textContent=life;
+    badge.classList.toggle('is-draft',/^Draft$/i.test(life));
+    badge.classList.toggle('is-archived',/^Archived$/i.test(life));
+    badge.setAttribute('aria-label','Lifecycle: '+life);
+
+    // Put lifecycle beside the Report ID — a stable semantic location that
+    // cannot collide with the title or the action buttons.
+    const idEl=card.querySelector('.report-id,.card-id,[data-report-id]');
+    if(idEl && idEl.parentElement){
+      if(badge.parentElement!==idEl.parentElement || badge.previousElementSibling!==idEl){
+        idEl.insertAdjacentElement('afterend',badge);
+      }
+    }else if(badge.parentElement!==card){
+      card.insertBefore(badge,card.firstElementChild||null);
+    }
+  }
+
+  function repairFavourite(card){
+    if(!card) return;
+    const group=card.querySelector(':scope > .rc08-action-group');
+    if(!group) return;
+    let stars=Array.from(card.querySelectorAll('.report-favourite-btn'));
+    let star=group.querySelector(':scope > .report-favourite-btn');
+    if(!star){
+      star=stars.shift();
+      if(star) group.insertBefore(star,group.firstChild);
+    }
+    stars=Array.from(card.querySelectorAll('.report-favourite-btn'));
+    stars.forEach(s=>{if(s!==star)s.remove();});
+    if(!star) return;
+
+    // Remove any target-phase handlers created by older versions by replacing
+    // the element once. The authoritative document capture bridge remains.
+    if(star.dataset.rc07FinalCleaned!=='1'){
+      const replacement=star.cloneNode(true);
+      replacement.dataset.rc07FinalCleaned='1';
+      star.replaceWith(replacement);
+      star=replacement;
+    }
+    const id=String(card.dataset.reportId||card.getAttribute('data-report-id')||card.dataset.id||card.getAttribute('data-id')||card.querySelector('.report-id')?.textContent||'').trim().replace(/\s+/g,' ').toLowerCase();
+    let fav=false;
+    try{fav=new Set(JSON.parse(localStorage.getItem('vpiLiteFavouriteReports')||'[]')).has(id);}catch(e){}
+    star.setAttribute('type','button');
+    star.setAttribute('aria-pressed',String(fav));
+    star.setAttribute('aria-label',fav?'Unfavourite report':'Favourite report');
+    star.title=fav?'Unfavourite':'Favourite';
+    star.innerHTML=fav
+      ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.56L12 17.53l-5.88 3.09 1.12-6.56-4.76-4.64 6.58-.96L12 2.5z"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.56L12 17.53l-5.88 3.09 1.12-6.56-4.76-4.64 6.58-.96L12 2.5z"/></svg>';
+    star.classList.toggle('is-favourite',fav);
+  }
+
+  function repair(){
+    cards().forEach(card=>{repairFavourite(card);placeLifecycle(card);});
+  }
+  function init(){
+    repair();
+    const grid=document.getElementById('catalogueGrid');
+    if(grid){
+      let queued=false;
+      const observer=new MutationObserver(()=>{
+        if(queued)return; queued=true;
+        requestAnimationFrame(()=>{queued=false;repair();});
+      });
+      observer.observe(grid,{childList:true,subtree:true});
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+})();
+</script>
+
+
+<style id="rc07-favourite-star-geometry-final">
+/* Final star geometry override: one clean, non-crossing 5-point star. */
+.report-favourite-btn{width:36px!important;height:36px!important;min-width:36px!important;min-height:36px!important;max-width:36px!important;max-height:36px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0!important;margin:0!important;box-sizing:border-box!important;line-height:0!important;font-size:0!important;overflow:visible!important;}
+.report-favourite-btn svg{display:block!important;width:21px!important;height:21px!important;min-width:21px!important;min-height:21px!important;max-width:21px!important;max-height:21px!important;margin:0!important;padding:0!important;flex:0 0 21px!important;overflow:visible!important;transform:none!important;}
+.report-favourite-btn svg path{stroke-linejoin:round!important;stroke-linecap:round!important;}
+.report-favourite-btn.is-favourite{color:#e0a400!important;}
+.report-favourite-btn:not(.is-favourite){color:#667085!important;}
+</style>
+<script id="rc07-favourite-star-geometry-runtime">
+(function(){
+ const STAR='M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.56L12 17.53l-5.88 3.09 1.12-6.56-4.76-4.64 6.58-.96L12 2.5z';
+ function fix(){document.querySelectorAll('.report-favourite-btn').forEach(function(b){const p=b.querySelector('svg path');if(p)p.setAttribute('d',STAR);});}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fix);else fix();
+ const g=document.getElementById('catalogueGrid');
+ if(g)new MutationObserver(fix).observe(g,{childList:true,subtree:true});
+})();
+</script>
 </body>
 </html>
