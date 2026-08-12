@@ -575,10 +575,14 @@
   #view-catalogue .rc13-page-btn:hover:not(:disabled){background:#f5f7fa;border-color:#b7c0ce;color:#17243d}
   #view-catalogue .rc13-page-btn:focus-visible,#view-catalogue .rc13-page-number:focus-visible{outline:2px solid #7b8da8;outline-offset:2px}
   #view-catalogue .rc13-page-btn:disabled{opacity:.38;cursor:not-allowed;background:#f8fafc}
-  #view-catalogue .rc13-fixed-page-size{font-weight:600;color:#667085}
+  #view-catalogue .rc13-fixed-page-size{font-weight:600;color:#667085} #view-catalogue .rc13-fixed-page-size.rc13-hide-favourites{display:none!important}
   #view-catalogue .rc13-navigation{margin-bottom:14px}
   #view-catalogue .rc13-pagination{order:999;width:100%;margin:22px 0 24px;padding:10px 0 4px}
   #view-catalogue #catalogueGrid + .rc13-pagination{clear:both}
+  /* Favourites is a dedicated saved-items view: never show RC-13 result navigation. */
+  #view-catalogue.rc13-favourites-active #rc13Navigation,
+  #view-catalogue.rc13-favourites-active #rc13Pagination,
+  #view-catalogue.rc13-favourites-active .rc13-fixed-page-size{display:none!important}
   #view-catalogue .rc13-page-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   #view-catalogue .rc13-page-text{width:auto;min-width:72px;padding:0 12px;font-size:12px;font-weight:600}
   #view-catalogue .rc13-page-numbers{display:flex;align-items:center;gap:4px}
@@ -605,6 +609,16 @@
   }
 </style>
 
+
+<style id="rc13-favourites-hard-hide">
+#view-catalogue.rc13-favourites-active #rc13Navigation,
+#view-catalogue.rc13-favourites-active #rc13Pagination,
+#view-catalogue.rc13-favourites-active .rc13-result-range,
+#view-catalogue.rc13-favourites-active .rc13-fixed-page-size,
+#view-catalogue.rc13-favourites-active .rc13-sort-control {
+  display: none !important;
+}
+</style>
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -873,7 +887,7 @@
             <div class="rc13-nav-left">
               <div class="rc13-result-range" id="rc13ResultRange" aria-live="polite">Showing 0–0 of 0 reports</div>
               <div class="rc13-page-size rc13-fixed-page-size" aria-label="Rows per page">
-                <span>6 reports per page</span>
+                <span>8 reports per page</span>
               </div>
             </div>
             <div class="rc13-nav-right">
@@ -1862,6 +1876,7 @@
 
     saveFavourites();
     syncCatalogue();
+    document.dispatchEvent(new CustomEvent('vpi:favourites-changed'));
   }
 
   function showFavouriteToast(message, type) {
@@ -1896,16 +1911,15 @@
       ensureFavouriteButton(card);
 
       const id = getCardId(card);
-      const favouriteAllowed =
-        activeCatalogueTab !== 'favourites' || favouriteIds.has(id);
-
-      // RC-13 pagination owns the final card visibility. Do not let the
-      // favourites synchronisation unhide cards that pagination intentionally
-      // placed on another page.
-      const paginationAllows = card.dataset.rc13PaginationHidden !== 'true';
-      const shouldShow = favouriteAllowed && paginationAllows;
-
-      card.style.display = shouldShow ? '' : 'none';
+      // Only the Favourites tab owns card visibility here. Public/Private
+      // visibility must remain under the catalogue's original filtering logic;
+      // otherwise switching away from Favourites can incorrectly hide or show
+      // cards from the wrong catalogue tab. Pagination is applied separately.
+      if (activeCatalogueTab === 'favourites') {
+        const favouriteAllowed = favouriteIds.has(id);
+        const paginationAllows = card.dataset.rc13PaginationHidden !== 'true';
+        card.style.display = favouriteAllowed && paginationAllows ? '' : 'none';
+      }
 
       const star = card.querySelector('.report-favourite-btn');
       if (star) updateStar(star, id);
@@ -1938,18 +1952,26 @@
     if (!visibleCards.length) {
       if (!empty) {
         grid.classList.add('is-empty');
+        const isFavourites = activeCatalogueTab === 'favourites';
         grid.insertAdjacentHTML('beforeend', `
           <div class="report-grid-empty" role="status" aria-live="polite">
             <div class="report-grid-empty-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="m20 20-4-4"></path>
+                ${isFavourites
+                  ? '<path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"></path>'
+                  : '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path>'}
               </svg>
             </div>
-            <strong>No reports match your filters</strong>
-            <span>Try adjusting your search or clearing one or more filters.</span>
+            <strong>${isFavourites ? 'No favourites added' : 'No reports match your filters'}</strong>
+            <span>${isFavourites ? 'Reports you mark as favourites will appear here.' : 'Try adjusting your search or clearing one or more filters.'}</span>
           </div>
         `);
+      } else if (empty) {
+        const isFavourites = activeCatalogueTab === 'favourites';
+        const title = empty.querySelector('strong');
+        const desc = empty.querySelector('span');
+        if (title) title.textContent = isFavourites ? 'No favourites added' : 'No reports match your filters';
+        if (desc) desc.textContent = isFavourites ? 'Reports you mark as favourites will appear here.' : 'Try adjusting your search or clearing one or more filters.';
       }
     } else {
       if (empty) empty.remove();
@@ -1966,9 +1988,16 @@
     const tab = event.target.closest('#view-catalogue .tab-btn');
 
     if (tab) {
-      event.preventDefault();
-      event.stopPropagation();
+      // Let the application's original Public/Private tab handler run as well.
+      // This RC-13 layer only tracks the active tab and must not block the
+      // catalogue's own data filtering.
       setActiveTab(tab.dataset.tab);
+      setTimeout(() => {
+        const active = document.querySelector('#view-catalogue .tab-btn.is-active');
+        if (active && active.dataset.tab) currentTab = active.dataset.tab;
+        invalidateEligibility();
+        apply();
+      }, 80);
       return;
     }
 
@@ -2019,7 +2048,7 @@
   'use strict';
 
   const stateByTab = {};
-  const defaultState = { page:1, pageSize:6, sort:'name-asc' };
+  const defaultState = { page:1, pageSize:8, sort:'name-asc' };
   let currentTab = 'public';
   let renderTimer = null;
   let loadingTimer = null;
@@ -2028,7 +2057,7 @@
 
   function state(){
     if(!stateByTab[currentTab]) stateByTab[currentTab] = {...defaultState};
-    stateByTab[currentTab].pageSize = 6;
+    stateByTab[currentTab].pageSize = 8;
     return stateByTab[currentTab];
   }
 
@@ -2136,6 +2165,16 @@
   function apply(resetIfNeeded){
     if(isApplying) return;
     const g=grid(); if(!g) return;
+
+    // Always derive the active catalogue tab from the actual UI state.
+    // This prevents the pagination layer from retaining 'public' after the
+    // Favourites tab has been selected by the catalogue's own tab handler.
+    const activeButton=document.querySelector('#view-catalogue .tab-btn.is-active');
+    if(activeButton?.dataset.tab) currentTab=activeButton.dataset.tab;
+    const catalogueView=document.getElementById('view-catalogue');
+    const isFavouritesNow=currentTab==='favourites';
+    catalogueView?.classList.toggle('rc13-favourites-active',isFavouritesNow);
+
     isApplying=true;
     const st=state();
     const all=cards();
@@ -2148,7 +2187,21 @@
         card.dataset.rc13FilteredVisible=(getComputedStyle(card).display!=='none' && !card.hidden)?'true':'false';
       }
     });
-    const filtered=all.filter(card=>card.dataset.rc13FilteredVisible!=='false');
+    const favouriteIds = currentTab === 'favourites' ? (() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem('vpiLiteFavouriteReports') || '[]');
+        return new Set(Array.isArray(saved) ? saved.map(v => norm(v)) : []);
+      } catch (_) {
+        return new Set();
+      }
+    })() : null;
+
+    const filtered=all.filter(card=>{
+      if(card.dataset.rc13FilteredVisible==='false') return false;
+      if(currentTab !== 'favourites') return true;
+      const id = norm(card.dataset.reportId || card.getAttribute('data-report-id') || card.dataset.id || card.id || firstText(card,['.report-card-title','.card-title','.report-name','[data-report-name]','h1','h2','h3','h4','h5']));
+      return favouriteIds.has(id);
+    });
 
     const sorted=sortCards(filtered);
     sorted.forEach((item,index)=>{
@@ -2170,11 +2223,30 @@
       card.style.display=should?'':'none';
     });
 
-    updateRange(total,total?start+1:0,end);
-    updateControls(total,st.page,totalPages);
-    const ps=document.getElementById('rc13PageSize'); if(ps) ps.value=String(st.pageSize);
-    const sort=document.getElementById('rc13Sort'); if(sort) sort.value=st.sort;
-    const nav=document.getElementById('rc13Pagination'); if(nav) nav.style.display=totalPages>1?'flex':'none';
+    const isFavourites = currentTab === 'favourites';
+
+    // Favourites is a clean saved-items view. Do not render/update any of the
+    // RC-13 result navigation UI in this tab. Public and Private Reports use
+    // the fixed 6-card pagination.
+    const navigation=document.getElementById('rc13Navigation');
+    const nav=document.getElementById('rc13Pagination');
+    const fixedPageSize=document.querySelector('.rc13-fixed-page-size');
+    const sortControl=document.querySelector('.rc13-sort-control');
+    if(isFavourites){
+      if(navigation) navigation.style.setProperty('display','none','important');
+      if(nav) nav.style.setProperty('display','none','important');
+      if(fixedPageSize) fixedPageSize.style.setProperty('display','none','important');
+      if(sortControl) sortControl.style.setProperty('display','none','important');
+    } else {
+      if(navigation) navigation.style.setProperty('display','flex','important');
+      if(nav) nav.style.setProperty('display', totalPages>1 ? 'flex' : 'none','important');
+      if(fixedPageSize) fixedPageSize.style.setProperty('display','inline-flex','important');
+      if(sortControl) sortControl.style.setProperty('display','flex','important');
+      updateRange(total,total?start+1:0,end);
+      updateControls(total,st.page,totalPages);
+      const ps=document.getElementById('rc13PageSize'); if(ps) ps.value=String(st.pageSize);
+      const sort=document.getElementById('rc13Sort'); if(sort) sort.value=st.sort;
+    }
     const empty=g.querySelector('.report-grid-empty');
     if(empty) empty.style.display=total===0?'flex':'none';
     isApplying=false;
@@ -2213,7 +2285,7 @@
   function init(){
     const g=grid(); if(!g) return;
     const ps=document.getElementById('rc13PageSize'), sort=document.getElementById('rc13Sort');
-    ps?.addEventListener('change',()=>{ state().pageSize=6; state().page=1; setLoading(true); apply(); });
+    ps?.addEventListener('change',()=>{ state().pageSize=8; state().page=1; setLoading(true); apply(); });
     sort?.addEventListener('change',()=>{ state().sort=sort.value||'name-asc'; state().page=1; setLoading(true); apply(); });
     document.getElementById('rc13First')?.addEventListener('click',()=>goTo(1,true));
     document.getElementById('rc13Prev')?.addEventListener('click',()=>goTo(state().page-1,true));
@@ -2235,7 +2307,14 @@
         currentTab=tab.dataset.tab||'public';
         if(!stateByTab[currentTab]) stateByTab[currentTab]={...defaultState};
         invalidateEligibility();
-        schedule(false);
+        const isFav = currentTab === 'favourites';
+        const navigation = document.getElementById('rc13Navigation');
+        const pagination = document.getElementById('rc13Pagination');
+        const view=document.getElementById('view-catalogue');
+        view?.classList.toggle('rc13-favourites-active',isFav);
+        if(navigation) navigation.style.setProperty('display', isFav ? 'none' : 'flex', 'important');
+        if(pagination) pagination.style.setProperty('display', isFav ? 'none' : 'flex', 'important');
+        apply();
       });
     });
 
@@ -2244,16 +2323,42 @@
     // We compare a stable card signature to avoid reacting to our own pagination changes.
     const observer = new MutationObserver(() => {
       if (isApplying) return;
+      const activeButton=document.querySelector('#view-catalogue .tab-btn.is-active');
+      const detectedTab=activeButton?.dataset.tab || currentTab;
       const sig = cardSignature();
-      if (sig !== lastCardSignature) {
+      const tabChanged=detectedTab!==currentTab;
+      if (tabChanged || sig !== lastCardSignature) {
+        currentTab=detectedTab;
         state().page = 1;
+        invalidateEligibility();
+        apply();
+      } else {
+        // Keep the Favourites chrome hidden even if another catalogue script
+        // re-renders the navigation nodes.
+        const view=document.getElementById('view-catalogue');
+        const fav=currentTab==='favourites';
+        view?.classList.toggle('rc13-favourites-active',fav);
+        document.getElementById('rc13Navigation')?.style.setProperty('display',fav?'none':'flex','important');
+        document.getElementById('rc13Pagination')?.style.setProperty('display',fav?'none':'flex','important');
+      }
+    });
+    observer.observe(g, { childList:true });
+    const tabObserver=new MutationObserver(()=>{
+      const activeButton=document.querySelector('#view-catalogue .tab-btn.is-active');
+      const detectedTab=activeButton?.dataset.tab || 'public';
+      if(detectedTab!==currentTab){
+        currentTab=detectedTab;
+        state().page=1;
         invalidateEligibility();
         apply();
       }
     });
-    observer.observe(g, { childList:true });
+    document.querySelectorAll('#view-catalogue .tab-btn').forEach(tab=>tabObserver.observe(tab,{attributes:true,attributeFilter:['class','aria-selected']}));
 
     const initialise = () => {
+      const activeButton=document.querySelector('#view-catalogue .tab-btn.is-active');
+      if(activeButton?.dataset.tab) currentTab=activeButton.dataset.tab;
+      document.getElementById('view-catalogue')?.classList.toggle('rc13-favourites-active',currentTab==='favourites');
       if (cards().length && !lastCardSignature) {
         invalidateEligibility();
         apply();
@@ -2264,6 +2369,14 @@
     setTimeout(initialise, 300);
     setTimeout(initialise, 700);
     setTimeout(initialise, 1200);
+
+    document.addEventListener('vpi:favourites-changed', () => {
+      if(currentTab === 'favourites') {
+        state().page = 1;
+        invalidateEligibility();
+        apply();
+      }
+    });
 
     // Keyboard navigation: Left/Right moves between pages when pagination has focus.
     document.getElementById('rc13Pagination')?.addEventListener('keydown',e=>{
