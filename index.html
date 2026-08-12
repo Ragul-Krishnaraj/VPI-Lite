@@ -558,6 +558,53 @@
 }
 </style>
 
+
+<style id="rc13-pagination-styles">
+  #view-catalogue .rc13-navigation{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    margin:16px 0 10px;padding:12px 14px;border:1px solid #e3e7ee;border-radius:9px;
+    background:#fbfcfe;box-sizing:border-box;
+  }
+  #view-catalogue .rc13-nav-left,#view-catalogue .rc13-nav-right{display:flex;align-items:center;gap:18px;min-width:0}
+  #view-catalogue .rc13-result-range{font-size:12px;font-weight:600;color:#475467;white-space:nowrap}
+  #view-catalogue .rc13-page-size,#view-catalogue .rc13-sort-control{display:flex;align-items:center;gap:8px;font-size:11px;color:#667085;white-space:nowrap}
+  #view-catalogue .rc13-page-size select,#view-catalogue .rc13-sort-control select{height:34px;padding:0 30px 0 10px;border:1px solid #d5dbe5;border-radius:7px;background:#fff;color:#344054;font-size:12px;outline:none;cursor:pointer}
+  #view-catalogue .rc13-page-size select:focus-visible,#view-catalogue .rc13-sort-control select:focus-visible{outline:2px solid #8aa0bd;outline-offset:1px}
+  #view-catalogue .rc13-pagination{display:flex;align-items:center;justify-content:end;gap:5px;margin:14px 0 4px;min-height:38px}
+  #view-catalogue .rc13-page-btn{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;padding:0;border:1px solid #d5dbe5;border-radius:7px;background:#fff;color:#475467;cursor:pointer;transition:.15s ease}
+  #view-catalogue .rc13-page-btn:hover:not(:disabled){background:#f5f7fa;border-color:#b7c0ce;color:#17243d}
+  #view-catalogue .rc13-page-btn:focus-visible,#view-catalogue .rc13-page-number:focus-visible{outline:2px solid #7b8da8;outline-offset:2px}
+  #view-catalogue .rc13-page-btn:disabled{opacity:.38;cursor:not-allowed;background:#f8fafc}
+  #view-catalogue .rc13-fixed-page-size{font-weight:600;color:#667085}
+  #view-catalogue .rc13-navigation{margin-bottom:14px}
+  #view-catalogue .rc13-pagination{order:999;width:100%;margin:22px 0 24px;padding:10px 0 4px}
+  #view-catalogue #catalogueGrid + .rc13-pagination{clear:both}
+  #view-catalogue .rc13-page-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  #view-catalogue .rc13-page-text{width:auto;min-width:72px;padding:0 12px;font-size:12px;font-weight:600}
+  #view-catalogue .rc13-page-numbers{display:flex;align-items:center;gap:4px}
+  #view-catalogue .rc13-page-number{min-width:34px;height:34px;padding:0 9px;border:1px solid transparent;border-radius:7px;background:transparent;color:#475467;font-size:12px;font-weight:600;cursor:pointer}
+  #view-catalogue .rc13-page-number:hover{background:#f3f5f8;color:#17243d}
+  #view-catalogue .rc13-page-number.is-current{border-color:#172b4d;background:#172b4d;color:#fff;font-weight:700}
+  #view-catalogue .rc13-page-ellipsis{min-width:24px;text-align:center;color:#98a2b3;font-size:12px}
+  #view-catalogue .rc13-page-status{margin-left:8px;padding-left:12px;border-left:1px solid #e2e6ec;color:#667085;font-size:11px;font-weight:600;white-space:nowrap}
+  #view-catalogue .rc13-loading{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-start;justify-content:center;padding-top:18px;background:rgba(255,255,255,.72);pointer-events:none}
+  #view-catalogue .rc13-loading-inner{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #dce2ea;border-radius:8px;background:#fff;box-shadow:0 6px 18px rgba(16,24,40,.08);font-size:11px;font-weight:600;color:#475467}
+  #view-catalogue .rc13-spinner{width:14px;height:14px;border:2px solid #d8dee8;border-top-color:#172b4d;border-radius:50%;animation:rc13spin .7s linear infinite}
+  @keyframes rc13spin{to{transform:rotate(360deg)}}
+  @media(max-width:900px){
+    #view-catalogue .rc13-navigation{align-items:flex-start;flex-direction:column}
+    #view-catalogue .rc13-nav-left,#view-catalogue .rc13-nav-right{width:100%;justify-content:space-between}
+    #view-catalogue .rc13-pagination{flex-wrap:wrap}
+  }
+  @media(max-width:600px){
+    #view-catalogue .rc13-nav-left{flex-wrap:wrap;gap:10px}
+    #view-catalogue .rc13-nav-right{justify-content:flex-start}
+    #view-catalogue .rc13-page-edge{width:32px;height:32px}
+    #view-catalogue .rc13-page-number{min-width:32px;height:32px}
+    #view-catalogue .rc13-page-status{display:none}
+  }
+</style>
+
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -822,7 +869,42 @@
             <span id="savedSearchWarningText"></span>
           </div>
 
+          <div class="rc13-navigation" id="rc13Navigation" aria-label="Report result navigation">
+            <div class="rc13-nav-left">
+              <div class="rc13-result-range" id="rc13ResultRange" aria-live="polite">Showing 0–0 of 0 reports</div>
+              <div class="rc13-page-size rc13-fixed-page-size" aria-label="Rows per page">
+                <span>6 reports per page</span>
+              </div>
+            </div>
+            <div class="rc13-nav-right">
+              <label class="rc13-sort-control">
+                <span>Sort by</span>
+                <select id="rc13Sort" aria-label="Sort reports">
+                  <option value="name-asc">Report Name — A to Z</option>
+                  <option value="name-desc">Report Name — Z to A</option>
+                  <option value="id-asc">Report ID — Low to High</option>
+                  <option value="id-desc">Report ID — High to Low</option>
+                  <option value="created-desc">Created Date — Newest</option>
+                  <option value="created-asc">Created Date — Oldest</option>
+                  <option value="modified-desc">Modified Date — Newest</option>
+                  <option value="modified-asc">Modified Date — Oldest</option>
+                  <option value="author-asc">Author — A to Z</option>
+                  <option value="frequency-asc">Frequency — A to Z</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
           <div class="report-grid" id="catalogueGrid"></div>
+
+          <nav class="rc13-pagination" id="rc13Pagination" aria-label="Report catalogue pagination">
+            <button type="button" class="rc13-page-btn rc13-page-edge rc13-page-text" id="rc13First" aria-label="Go to first page" title="First page">First</button>
+            <button type="button" class="rc13-page-btn rc13-page-edge rc13-page-text" id="rc13Prev" aria-label="Go to previous page" title="Previous page">Previous</button>
+            <div class="rc13-page-numbers" id="rc13PageNumbers" role="list"></div>
+            <button type="button" class="rc13-page-btn rc13-page-edge rc13-page-text" id="rc13Next" aria-label="Go to next page" title="Next page">Next</button>
+            <button type="button" class="rc13-page-btn rc13-page-edge rc13-page-text" id="rc13Last" aria-label="Go to last page" title="Last page">Last</button>
+            <span class="rc13-page-status" id="rc13PageStatus" aria-live="polite">Page 1 of 1</span>
+          </nav>
         </section>
 
         <!-- ============ View: Reports Centre ============ -->
@@ -1814,8 +1896,14 @@
       ensureFavouriteButton(card);
 
       const id = getCardId(card);
-      const shouldShow =
+      const favouriteAllowed =
         activeCatalogueTab !== 'favourites' || favouriteIds.has(id);
+
+      // RC-13 pagination owns the final card visibility. Do not let the
+      // favourites synchronisation unhide cards that pagination intentionally
+      // placed on another page.
+      const paginationAllows = card.dataset.rc13PaginationHidden !== 'true';
+      const shouldShow = favouriteAllowed && paginationAllows;
 
       card.style.display = shouldShow ? '' : 'none';
 
@@ -1926,6 +2014,273 @@
 <script src="js/header.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/wizard.js"></script>
-<script src="js/app.js"></script>
+<script src="js/app.js"></script>\n<script id="rc13-pagination-script">
+(function(){
+  'use strict';
+
+  const stateByTab = {};
+  const defaultState = { page:1, pageSize:6, sort:'name-asc' };
+  let currentTab = 'public';
+  let renderTimer = null;
+  let loadingTimer = null;
+  let isApplying = false;
+  let lastCardSignature = '';
+
+  function state(){
+    if(!stateByTab[currentTab]) stateByTab[currentTab] = {...defaultState};
+    stateByTab[currentTab].pageSize = 6;
+    return stateByTab[currentTab];
+  }
+
+  function grid(){ return document.getElementById('catalogueGrid'); }
+  function cards(){
+    const g=grid(); if(!g) return [];
+    return Array.from(g.children).filter(c=>!c.classList.contains('report-grid-empty') && !c.classList.contains('rc13-loading'));
+  }
+  function cardSignature(){
+    return cards().map(c => c.dataset.reportId || c.getAttribute('data-report-id') || c.dataset.id || c.id || (c.querySelector('.report-card-title,.card-title,.report-name,h1,h2,h3,h4,h5')?.textContent || '').trim()).join('||');
+  }
+  function norm(v){ return String(v==null?'':v).trim().replace(/\\s+/g,' ').toLowerCase(); }
+  function text(card){ return norm(card?.textContent||''); }
+
+  function firstText(card, selectors){
+    for(const sel of selectors){ const el=card.querySelector(sel); if(el && el.textContent.trim()) return el.textContent.trim(); }
+    return '';
+  }
+
+  function meta(card){
+    const name=firstText(card,['.report-card-title','.card-title','.report-name','[data-report-name]','h1','h2','h3','h4','h5']) || card.getAttribute('data-report-name') || '';
+    const id=card.dataset.reportId || card.getAttribute('data-report-id') || card.dataset.id || card.getAttribute('data-id') || '';
+    const author=card.dataset.author || card.getAttribute('data-author') || firstText(card,['[data-author]','.report-author','.card-author','.author']);
+    const frequency=card.dataset.frequency || card.getAttribute('data-frequency') || firstText(card,['[data-frequency]','.report-frequency','.card-frequency','.frequency']);
+    const created=card.dataset.createdDate || card.dataset.created || card.getAttribute('data-created-date') || card.getAttribute('data-created') || firstText(card,['[data-created-date]','[data-created]','.created-date','.report-created','.created']);
+    const modified=card.dataset.modifiedDate || card.dataset.modified || card.getAttribute('data-modified-date') || card.getAttribute('data-modified') || firstText(card,['[data-modified-date]','[data-modified]','.modified-date','.report-modified','.modified']);
+    return {name,id,author,frequency,created,modified};
+  }
+
+  function dateValue(v){
+    const d=Date.parse(String(v||''));
+    return Number.isNaN(d)?0:d;
+  }
+  function idValue(v){
+    const n=String(v||'').match(/\\d+/);
+    return n?Number(n[0]):String(v||'').toLowerCase();
+  }
+
+  function compare(a,b,field,dir){
+    let av=a[field]||'', bv=b[field]||'', result=0;
+    if(field==='created'||field==='modified'){ result=dateValue(av)-dateValue(bv); }
+    else if(field==='id'){
+      const ai=idValue(av), bi=idValue(bv);
+      if(typeof ai==='number' && typeof bi==='number') result=ai-bi;
+      else result=String(ai).localeCompare(String(bi),undefined,{numeric:true,sensitivity:'base'});
+    } else result=String(av).localeCompare(String(bv),undefined,{numeric:true,sensitivity:'base'});
+    return dir==='desc' ? -result : result;
+  }
+
+  function sortCards(list){
+    const [field,dir]=state().sort.split('-');
+    return list.map((card,index)=>({card,m:meta(card),index})).sort((a,b)=>compare(a.m,b.m,field,dir)||a.index-b.index);
+  }
+
+  function captureBaseVisibility(list){
+    return list.filter(card=>card.dataset.rc13FilteredVisible!=='false' && !card.hidden && getComputedStyle(card).display!=='none');
+  }
+
+  function setLoading(show){
+    // Pagination is local/in-memory, so do not block the catalogue with a refresh overlay.
+    const el=document.getElementById('rc13Loading');
+    if(el) el.style.display='none';
+  }
+
+  function updateRange(total,start,end){
+    const range=document.getElementById('rc13ResultRange');
+    const legacy=document.getElementById('catalogueResultCount');
+    if(range) range.textContent=total ? `Showing ${start}–${end} of ${total} ${total===1?'report':'reports'}` : 'Showing 0–0 of 0 reports';
+    if(legacy) legacy.textContent=total + (total===1?' report':' reports');
+  }
+
+  function renderPages(total,page,totalPages){
+    const wrap=document.getElementById('rc13PageNumbers'); if(!wrap) return;
+    wrap.innerHTML='';
+    if(totalPages<=1) return;
+    const pages=[];
+    if(totalPages<=7){ for(let i=1;i<=totalPages;i++) pages.push(i); }
+    else {
+      pages.push(1);
+      if(page>4) pages.push('…');
+      const from=Math.max(2,page-1), to=Math.min(totalPages-1,page+1);
+      for(let i=from;i<=to;i++) pages.push(i);
+      if(page<totalPages-3) pages.push('…');
+      pages.push(totalPages);
+    }
+    pages.forEach(p=>{
+      if(p==='…'){ const s=document.createElement('span'); s.className='rc13-page-ellipsis'; s.textContent='…'; s.setAttribute('aria-hidden','true'); wrap.appendChild(s); return; }
+      const b=document.createElement('button');
+      b.type='button'; b.className='rc13-page-number'+(p===page?' is-current':''); b.textContent=p;
+      b.setAttribute('role','listitem'); b.setAttribute('aria-label',`Go to page ${p}`);
+      if(p===page) b.setAttribute('aria-current','page');
+      b.addEventListener('click',()=>goTo(p,true));
+      wrap.appendChild(b);
+    });
+  }
+
+  function updateControls(total,page,totalPages){
+    const first=document.getElementById('rc13First'),prev=document.getElementById('rc13Prev'),next=document.getElementById('rc13Next'),last=document.getElementById('rc13Last');
+    [first,prev].forEach(b=>{if(b)b.disabled=page<=1;});
+    [next,last].forEach(b=>{if(b)b.disabled=page>=totalPages || total===0;});
+    const status=document.getElementById('rc13PageStatus'); if(status) status.textContent=`Page ${totalPages?Math.min(page,totalPages):1} of ${totalPages||1}`;
+    renderPages(total,page,totalPages);
+  }
+
+  function apply(resetIfNeeded){
+    if(isApplying) return;
+    const g=grid(); if(!g) return;
+    isApplying=true;
+    const st=state();
+    const all=cards();
+
+    // Keep filter visibility separate from pagination visibility. Once a card is
+    // hidden for page 1, its display:none must NOT make it disappear from the
+    // overall result set when the user clicks Next.
+    all.forEach(card=>{
+      if(card.dataset.rc13FilteredVisible == null){
+        card.dataset.rc13FilteredVisible=(getComputedStyle(card).display!=='none' && !card.hidden)?'true':'false';
+      }
+    });
+    const filtered=all.filter(card=>card.dataset.rc13FilteredVisible!=='false');
+
+    const sorted=sortCards(filtered);
+    sorted.forEach((item,index)=>{
+      const card=item.card;
+      card.dataset.rc13PaginationIndex=String(index);
+      g.appendChild(card);
+    });
+
+    const total=sorted.length;
+    const totalPages=Math.max(1,Math.ceil(total/st.pageSize));
+    if(st.page>totalPages) st.page=1;
+    const start=(st.page-1)*st.pageSize;
+    const end=Math.min(start+st.pageSize,total);
+    const visibleSet=new Set(sorted.slice(start,end).map(x=>x.card));
+
+    all.forEach(card=>{
+      const should=card.dataset.rc13FilteredVisible!=='false' && visibleSet.has(card);
+      card.dataset.rc13PaginationHidden=should?'false':'true';
+      card.style.display=should?'':'none';
+    });
+
+    updateRange(total,total?start+1:0,end);
+    updateControls(total,st.page,totalPages);
+    const ps=document.getElementById('rc13PageSize'); if(ps) ps.value=String(st.pageSize);
+    const sort=document.getElementById('rc13Sort'); if(sort) sort.value=st.sort;
+    const nav=document.getElementById('rc13Pagination'); if(nav) nav.style.display=totalPages>1?'flex':'none';
+    const empty=g.querySelector('.report-grid-empty');
+    if(empty) empty.style.display=total===0?'flex':'none';
+    isApplying=false;
+    lastCardSignature = cardSignature();
+  }
+
+  function invalidateEligibility(){
+    cards().forEach(card=>{
+      delete card.dataset.rc13FilteredVisible;
+      delete card.dataset.rc13PaginationHidden;
+    });
+  }
+
+  function schedule(reset){
+    clearTimeout(renderTimer);
+    renderTimer=setTimeout(()=>{
+      if(reset){
+        state().page=1;
+        invalidateEligibility();
+      }
+      apply();
+    },90);
+  }
+
+  function goTo(page,loading){
+    const total=cards().filter(c=>c.dataset.rc13FilteredVisible!=='false').length;
+    const pages=Math.max(1,Math.ceil(total/state().pageSize));
+    state().page=Math.max(1,Math.min(page,pages));
+    if(loading) setLoading(true);
+    apply();
+    document.getElementById('rc13Navigation')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  function resetFromCriteria(){ schedule(true); }
+
+  function init(){
+    const g=grid(); if(!g) return;
+    const ps=document.getElementById('rc13PageSize'), sort=document.getElementById('rc13Sort');
+    ps?.addEventListener('change',()=>{ state().pageSize=6; state().page=1; setLoading(true); apply(); });
+    sort?.addEventListener('change',()=>{ state().sort=sort.value||'name-asc'; state().page=1; setLoading(true); apply(); });
+    document.getElementById('rc13First')?.addEventListener('click',()=>goTo(1,true));
+    document.getElementById('rc13Prev')?.addEventListener('click',()=>goTo(state().page-1,true));
+    document.getElementById('rc13Next')?.addEventListener('click',()=>goTo(state().page+1,true));
+    document.getElementById('rc13Last')?.addEventListener('click',()=>{
+      const total=cards().filter(c=>c.dataset.rc13FilteredVisible!=='false').length;
+      goTo(Math.max(1,Math.ceil(total/state().pageSize)),true);
+    });
+
+    // Search/filter changes must always return to page one.
+    ['catalogueSearch','filter-rail','filter-category','filter-region','filter-frequency','filter-author'].forEach(id=>{
+      const el=document.getElementById(id); if(!el) return;
+      el.addEventListener(el.tagName==='INPUT'?'input':'change',resetFromCriteria);
+    });
+
+    // Catalogue tabs retain their own page/sort state.
+    document.querySelectorAll('#view-catalogue .tab-btn').forEach(tab=>{
+      tab.addEventListener('click',()=>{
+        currentTab=tab.dataset.tab||'public';
+        if(!stateByTab[currentTab]) stateByTab[currentTab]={...defaultState};
+        invalidateEligibility();
+        schedule(false);
+      });
+    });
+
+    // The catalogue renderer creates report cards asynchronously. Watch for genuine
+    // card-set changes so RC-13 applies pagination after the cards actually exist.
+    // We compare a stable card signature to avoid reacting to our own pagination changes.
+    const observer = new MutationObserver(() => {
+      if (isApplying) return;
+      const sig = cardSignature();
+      if (sig !== lastCardSignature) {
+        state().page = 1;
+        invalidateEligibility();
+        apply();
+      }
+    });
+    observer.observe(g, { childList:true });
+
+    const initialise = () => {
+      if (cards().length && !lastCardSignature) {
+        invalidateEligibility();
+        apply();
+      }
+    };
+    initialise();
+    setTimeout(initialise, 100);
+    setTimeout(initialise, 300);
+    setTimeout(initialise, 700);
+    setTimeout(initialise, 1200);
+
+    // Keyboard navigation: Left/Right moves between pages when pagination has focus.
+    document.getElementById('rc13Pagination')?.addEventListener('keydown',e=>{
+      if(e.key==='ArrowRight'){e.preventDefault();goTo(state().page+1,true);}
+      if(e.key==='ArrowLeft'){e.preventDefault();goTo(state().page-1,true);}
+      if(e.key==='Home' && (e.ctrlKey||e.metaKey)){e.preventDefault();goTo(1,true);}
+      if(e.key==='End' && (e.ctrlKey||e.metaKey)){
+        e.preventDefault();
+        const total=cards().filter(c=>c.dataset.rc13FilteredVisible!=='false').length;
+        goTo(Math.max(1,Math.ceil(total/state().pageSize)),true);
+      }
+    });
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+</script>\n
 </body>
 </html>
