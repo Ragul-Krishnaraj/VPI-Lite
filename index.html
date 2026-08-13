@@ -1608,6 +1608,15 @@
   }
 </style>
 
+<style id="rc08-clone-style">
+.rc08-clone-name-modal{position:fixed;inset:0;background:rgba(16,24,40,.45);z-index:100001;display:flex;align-items:center;justify-content:center}
+.rc08-clone-name-card{width:min(460px,calc(100vw - 32px));background:#fff;border-radius:12px;padding:24px;box-shadow:0 20px 50px rgba(16,24,40,.22)}
+.rc08-clone-name-card h3{margin:0 0 8px;font-size:18px}
+.rc08-clone-name-card p{margin:0 0 16px;color:#475467;font-size:14px}
+.rc08-clone-name-card input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #D0D5DD;border-radius:8px}
+.rc08-clone-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+</style>
+
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -4164,6 +4173,7 @@
       openWorkspace('schedule',card);
     }else if(action==='clone'){
       // Clone must open the Report Builder directly with Payment Transactions > Amount selected.
+      if(typeof window.__rc08OnCloneAction==='function') window.__rc08OnCloneAction(card);
       rc08OpenBuilderWithSelection('clone',card);
     }else if(action==='edit'){
       // Edit is available from the card menu and always opens Create Report.
@@ -5085,6 +5095,11 @@
 
       // Only redirect when the existing success state confirms generation.
       if(successState && successState.style.display !== 'none'){
+        if(window.__RC08_CLONE_GENERATING__ && typeof window.__rc08FinishCloneGeneration==='function'){
+          window.__rc08FinishCloneGeneration();
+          return;
+        }
+
         if(typeof window.showToast === 'function'){
           window.showToast('Reports generated successfully', 'success');
         }else if(window.VP && VP.ui && typeof VP.ui.toast === 'function'){
@@ -5242,6 +5257,244 @@
     document.addEventListener('DOMContentLoaded',syncWorkspaceState);
   }else{
     syncWorkspaceState();
+  }
+})();
+</script>
+
+
+<script id="rc08-clone-card-final">
+(function(){
+  'use strict';
+
+  const STORAGE_KEY='rc08GeneratedReportCards';
+  let cloneState=null;
+  let finishing=false;
+
+  function esc(v){
+    return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function titleOf(card){
+    const el=card?.querySelector?.('.report-card-title,.card-title,.report-name,[data-report-name],h1,h2,h3,h4,h5');
+    return (el?.textContent||card?.dataset?.reportName||'Report').trim();
+  }
+
+  function read(){
+    try{
+      const v=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+      return Array.isArray(v)?v:[];
+    }catch(e){return [];}
+  }
+
+  function save(item){
+    const list=read().filter(x=>x.name!==item.name);
+    list.unshift(item);
+    try{localStorage.setItem(STORAGE_KEY,JSON.stringify(list.slice(0,100)));}catch(e){}
+  }
+
+  // This hook is called by the existing RC-08 menu handler before it opens
+  // the real Report Builder. Nothing else in the existing clone flow changes.
+  window.__rc08OnCloneAction=function(card){
+    if(!card) return;
+    cloneState={
+      source:{
+        id:card.dataset.reportId||card.getAttribute('data-report-id')||card.dataset.id||'',
+        name:titleOf(card),
+        html:card.outerHTML
+      },
+      name:titleOf(card)+' - Copy'
+    };
+    window.__RC08_CLONE_GENERATING__=false;
+  };
+
+  function makeCard(item){
+    const grid=document.getElementById('catalogueGrid');
+    if(!grid || !item.source?.html) return null;
+
+    const exists=Array.from(grid.children).find(c=>{
+      return c.dataset.generatedClone==='true' && titleOf(c)===item.name;
+    });
+    if(exists) return exists;
+
+    const holder=document.createElement('div');
+    holder.innerHTML=item.source.html.trim();
+    const card=holder.firstElementChild;
+    if(!card) return null;
+
+    const id=item.id;
+    card.dataset.generatedClone='true';
+    card.dataset.reportId=id;
+    card.dataset.id=id;
+    card.dataset.reportName=item.name;
+    card.setAttribute('data-report-id',id);
+    card.setAttribute('data-id',id);
+    card.setAttribute('data-report-name',item.name);
+
+    const title=card.querySelector('.report-card-title,.card-title,.report-name,[data-report-name],h1,h2,h3,h4,h5');
+    if(title) title.textContent=item.name;
+
+    const idEl=card.querySelector('.report-card-id,.report-id,.card-id,[data-report-id]');
+    if(idEl) idEl.textContent=id;
+
+    // Preserve every other part of the original card exactly as-is.
+    const gridEmpty=grid.querySelector('.report-grid-empty');
+    if(gridEmpty) gridEmpty.remove();
+
+    grid.insertBefore(card,grid.firstChild);
+
+    try{
+      if(typeof window.rc08EnhanceAll==='function') window.rc08EnhanceAll();
+    }catch(e){}
+    try{
+      if(window.lucide?.createIcons) window.lucide.createIcons();
+    }catch(e){}
+
+    return card;
+  }
+
+  function restoreCards(){
+    read().forEach(item=>makeCard(item));
+  }
+
+  function goCatalogue(){
+    const link=document.querySelector('[data-nav-view="catalogue"]');
+    if(link){
+      link.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window}));
+    }else{
+      location.hash='#/catalogue';
+    }
+  }
+
+  function revealCard(name){
+    let tries=0;
+    const attempt=function(){
+      tries++;
+      const grid=document.getElementById('catalogueGrid');
+      if(!grid){
+        if(tries<30) setTimeout(attempt,200);
+        return;
+      }
+
+      const card=Array.from(grid.children).find(c=>c.dataset.generatedClone==='true' && titleOf(c)===name);
+      if(!card){
+        if(tries<30) setTimeout(attempt,200);
+        return;
+      }
+
+      // RC-13 assigns the real pagination index after the card is inserted.
+      const idx=parseInt(card.dataset.rc13PaginationIndex,10);
+      const size=parseInt(document.getElementById('rc13PageSize')?.value||'8',10);
+
+      if(Number.isFinite(idx) && size>0){
+        const page=Math.floor(idx/size)+1;
+        const pageButton=Array.from(document.querySelectorAll('#rc13PageNumbers .rc13-page-number'))
+          .find(b=>Number(b.textContent.trim())===page);
+        if(pageButton) pageButton.click();
+      }
+
+      setTimeout(function(){
+        card.scrollIntoView({behavior:'smooth',block:'center'});
+      },100);
+    };
+    attempt();
+  }
+
+  window.__rc08FinishCloneGeneration=function(){
+    if(finishing || !cloneState) return;
+
+    const success=document.getElementById('builderSuccess');
+    if(success && success.style.display==='none') return;
+
+    finishing=true;
+    window.__RC08_CLONE_GENERATING__=true;
+
+    const name=(document.getElementById('reportNameInput')?.value||
+      document.getElementById('successReportName')?.textContent||
+      cloneState.name).trim();
+
+    const item={
+      id:'RPT-CLONE-'+Date.now(),
+      name:name || cloneState.name,
+      source:cloneState.source,
+      generatedAt:new Date().toISOString()
+    };
+
+    save(item);
+    cloneState=null;
+
+    // The clone must always land in Report Catalog.
+    goCatalogue();
+
+    // The catalog cards are rendered asynchronously by the existing app.
+    // Wait for that render, then insert the generated card and show its page.
+    let tries=0;
+    const finishRender=function(){
+      tries++;
+      makeCard(item);
+      const grid=document.getElementById('catalogueGrid');
+      const found=grid && Array.from(grid.children).some(c=>c.dataset.generatedClone==='true' && titleOf(c)===item.name);
+      if(found){
+        // Give RC-13 one tick to recalculate total/pages, then reveal the page.
+        setTimeout(function(){revealCard(item.name);},300);
+      }else if(tries<30){
+        setTimeout(finishRender,250);
+      }
+    };
+    setTimeout(finishRender,250);
+
+    // Keep the flag true only while the generic redirect callback can still fire.
+    setTimeout(function(){
+      window.__RC08_CLONE_GENERATING__=false;
+      finishing=false;
+    },2500);
+  };
+
+  // Read the current name from the actual builder while the user renames the clone.
+  document.addEventListener('input',function(e){
+    if(!cloneState) return;
+    if(e.target?.id==='reportNameInput') cloneState.name=e.target.value.trim()||cloneState.name;
+  },true);
+  document.addEventListener('change',function(e){
+    if(!cloneState) return;
+    if(e.target?.id==='reportNameInput') cloneState.name=e.target.value.trim()||cloneState.name;
+  },true);
+
+  // Capture Generate before normal bubble handlers. We do NOT block generation;
+  // we only mark this as a clone so the existing success redirect hands off to us.
+  document.addEventListener('click',function(e){
+    const btn=e.target.closest?.('#btnGenerateReport');
+    if(!btn || !cloneState) return;
+    window.__RC08_CLONE_GENERATING__=true;
+
+    // Fallback in case the success callback is delayed or another handler finishes first.
+    [250,700,1200,1800].forEach(function(delay){
+      setTimeout(function(){
+        if(window.__RC08_CLONE_GENERATING__ && !finishing){
+          const success=document.getElementById('builderSuccess');
+          if(success && success.style.display!=='none'){
+            window.__rc08FinishCloneGeneration();
+          }
+        }
+      },delay);
+    });
+  },true);
+
+  // Restore previously generated clone cards whenever the catalogue is opened.
+  window.addEventListener('hashchange',function(){
+    if(String(location.hash||'').toLowerCase().includes('catalogue')){
+      setTimeout(restoreCards,400);
+      setTimeout(restoreCards,900);
+    }
+  });
+
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){
+      setTimeout(restoreCards,700);
+    });
+  }else{
+    setTimeout(restoreCards,700);
   }
 })();
 </script>
