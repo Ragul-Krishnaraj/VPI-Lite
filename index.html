@@ -1571,6 +1571,43 @@
   }
 </style>
 
+
+<style id="rc01-unsaved-warning-style">
+  #rc01UnsavedChangesModal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:100000;
+    background:rgba(16,24,40,.45);
+    align-items:center;
+    justify-content:center;
+  }
+  #rc01UnsavedChangesModal.is-open{display:flex;}
+  #rc01UnsavedChangesModal .rc01-warning-card{
+    width:min(440px,calc(100vw - 32px));
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 20px 50px rgba(16,24,40,.22);
+    padding:24px;
+  }
+  #rc01UnsavedChangesModal h3{
+    margin:0 0 8px;
+    font-size:18px;
+    color:#101828;
+  }
+  #rc01UnsavedChangesModal p{
+    margin:0 0 20px;
+    color:#475467;
+    font-size:14px;
+    line-height:21px;
+  }
+  #rc01UnsavedChangesModal .actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+  }
+</style>
+
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -5073,6 +5110,139 @@
       }
     }, 0);
   }, false);
+})();
+</script>
+
+
+<div id="rc01UnsavedChangesModal" role="dialog" aria-modal="true"
+     aria-labelledby="rc01UnsavedChangesTitle">
+  <div class="rc01-warning-card">
+    <h3 id="rc01UnsavedChangesTitle">Unsaved changes</h3>
+    <p>You have unsaved changes in Report Workspace. Are you sure you want to leave without saving?</p>
+    <div class="actions">
+      <button type="button" id="rc01StayBtn" class="btn btn-secondary">Stay</button>
+      <button type="button" id="rc01LeaveBtn" class="btn btn-primary">Leave without saving</button>
+    </div>
+  </div>
+</div>
+
+
+<script id="rc01-unsaved-changes-guard">
+(function(){
+  'use strict';
+
+  var dirty = false;
+  var workspaceActive = false;
+  var pendingNavigation = null;
+
+  function workspaceIsActive(){
+    var h=String(location.hash||'').toLowerCase();
+    return h.indexOf('builder') !== -1 ||
+           h.indexOf('workspace') !== -1 ||
+           !!document.querySelector('#view-builder.is-active, #view-builder.active, #view-workspace.is-active, #view-workspace.active');
+  }
+
+  function hasMeaningfulValue(el){
+    if(!el) return false;
+    if(el.type==='checkbox' || el.type==='radio') return el.checked;
+    return String(el.value || '').trim() !== '';
+  }
+
+  function markDirty(){
+    if(workspaceIsActive()) dirty=true;
+  }
+
+  function clearDirty(){
+    dirty=false;
+  }
+
+  function shouldWarn(){
+    return workspaceActive && dirty && workspaceIsActive();
+  }
+
+  function openWarning(navigation){
+    pendingNavigation=navigation || null;
+    var modal=document.getElementById('rc01UnsavedChangesModal');
+    if(modal) modal.classList.add('is-open');
+  }
+
+  function closeWarning(){
+    var modal=document.getElementById('rc01UnsavedChangesModal');
+    if(modal) modal.classList.remove('is-open');
+    pendingNavigation=null;
+  }
+
+  document.addEventListener('input',function(e){
+    var el=e.target;
+    if(!el || !el.closest) return;
+    if(el.closest('#view-builder, #view-workspace, [id*="Workspace"], [id*="workspace"]')) markDirty();
+  },true);
+
+  document.addEventListener('change',function(e){
+    var el=e.target;
+    if(!el || !el.closest) return;
+    if(el.closest('#view-builder, #view-workspace, [id*="Workspace"], [id*="workspace"]')) markDirty();
+  },true);
+
+  document.addEventListener('click',function(e){
+    var target=e.target && e.target.closest ? e.target.closest('a,button,[data-route],[data-nav-view]') : null;
+    if(!target) return;
+
+    var route=target.getAttribute('data-nav-view') || target.getAttribute('data-route') || '';
+    var href=target.getAttribute('href') || '';
+    var isLeaving =
+      route && !/builder|workspace/i.test(route) ||
+      href && !/builder|workspace/i.test(href);
+
+    if(workspaceIsActive() && dirty && isLeaving){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      openWarning(function(){
+        if(href && href !== '#'){
+          location.href=href;
+        }else if(typeof target.click==='function'){
+          // Temporarily disable the guard and replay the original action.
+          dirty=false;
+          target.dataset.rc01Bypass='true';
+          target.click();
+          delete target.dataset.rc01Bypass;
+        }
+      });
+    }
+  },true);
+
+  document.getElementById('rc01StayBtn')?.addEventListener('click',closeWarning);
+
+  document.getElementById('rc01LeaveBtn')?.addEventListener('click',function(){
+    var next=pendingNavigation;
+    closeWarning();
+    dirty=false;
+    workspaceActive=false;
+    if(next) next();
+  });
+
+  // beforeunload protects browser refresh/tab close as well.
+  window.addEventListener('beforeunload',function(e){
+    if(shouldWarn()){
+      e.preventDefault();
+      e.returnValue='';
+    }
+  });
+
+  function syncWorkspaceState(){
+    workspaceActive=workspaceIsActive();
+    if(!workspaceActive){
+      clearDirty();
+    }
+  }
+
+  window.addEventListener('hashchange',syncWorkspaceState);
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',syncWorkspaceState);
+  }else{
+    syncWorkspaceState();
+  }
 })();
 </script>
 
