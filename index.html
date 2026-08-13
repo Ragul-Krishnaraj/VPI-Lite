@@ -3374,8 +3374,13 @@
       CURRENT_ROLE.toLowerCase().includes('administrator')
     );
 
-    menu.querySelector('[data-action="edit"]').disabled=!canEdit;
-    menu.querySelector('[data-action="edit"]').title=canEdit?'Edit report':'Edit available only to owner or administrator';
+    // Edit must always be visible and selectable from every report card.
+    // The requested UX is to open the Create Report workspace for editing.
+    const editItem=menu.querySelector('[data-action="edit"]');
+    if(editItem){
+      editItem.disabled=false;
+      editItem.removeAttribute('title');
+    }
     const deleteItem=menu.querySelector('[data-action="delete"]');
     if(deleteItem){
       deleteItem.disabled=isSystem;
@@ -3988,6 +3993,10 @@
       const format=document.getElementById('rc08ScheduleOutput')?.value || 'CSV Export';
       toast('Schedule saved: '+freq+' from '+date+' • '+format,'success');
       closeWorkspace();
+
+      // After saving a schedule, always return to the Report Workspace (Create Report builder).
+      // The application exposes the workspace through the builder navigation.
+      rc08Navigate('builder');
       return;
     }
 
@@ -4090,8 +4099,8 @@
       // Clone must open the Report Builder directly with Payment Transactions > Amount selected.
       rc08OpenBuilderWithSelection('clone',card);
     }else if(action==='edit'){
-      if(canEdit(card)) openWorkspace('edit',card);
-      else toast('Edit is available only to the report owner or administrator','error');
+      // Edit is available from the card menu and always opens Create Report.
+      rc08OpenBuilderWithSelection('edit',card);
     }else if(action==='details'){
       // View Details now opens only the Report Builder page.
       rc08OpenBuilderWithSelection('details',card);
@@ -4855,15 +4864,38 @@
   function ensureAllCataloguePreviewValues(){
     var picker=document.getElementById('dataSourcePicker');
     if(picker){
-      // Preview must contain every available field from the selected dataset.
-      picker.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
-        if(!cb.disabled && !cb.checked){ cb.checked=true; fire(cb,'change'); }
+      // Preview must always have the dataset selected before selecting fields.
+      // The previous logic intentionally skipped "Payment Transactions", which
+      // left the dataset unselected when coming from Catalogue > Preview.
+      var sourceCandidates=Array.from(
+        picker.querySelectorAll('label,button,[role="option"],[role="button"]')
+      );
+      var sourceEl=sourceCandidates.find(function(el){
+        return /^payment transactions$/i.test((el.textContent||'').replace(/\s+/g,' ').trim());
       });
-      picker.querySelectorAll('label,button,[role="option"],[role="button"]').forEach(function(el){
-        var input=el.matches('input[type="checkbox"]')?el:el.querySelector('input[type="checkbox"]');
-        var text=(el.textContent||'').replace(/\s+/g,' ').trim();
-        if(input && !input.disabled && !input.checked && text && !/^payment transactions$/i.test(text)) el.click();
-      });
+      if(sourceEl){
+        var sourceInput=sourceEl.matches('input[type="checkbox"]')
+          ? sourceEl
+          : sourceEl.querySelector('input[type="checkbox"]');
+        var selected = sourceInput
+          ? sourceInput.checked
+          : /selected|active|checked|is-selected/i.test(sourceEl.className||'');
+        if(!selected){
+          (sourceEl.closest('label,button,[role="option"],[role="button"]') || sourceEl).click();
+        }
+      }
+
+      // Wait for the dataset's field controls to render, then select all fields.
+      setTimeout(function(){
+        picker.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
+          if(!cb.disabled && !cb.checked){ cb.checked=true; fire(cb,'change'); }
+        });
+        picker.querySelectorAll('label,button,[role="option"],[role="button"]').forEach(function(el){
+          var input=el.matches('input[type="checkbox"]')?el:el.querySelector('input[type="checkbox"]');
+          var text=(el.textContent||'').replace(/\s+/g,' ').trim();
+          if(input && !input.disabled && !input.checked && text && !/^payment transactions$/i.test(text)) el.click();
+        });
+      },120);
     }
 
     fillRequiredPanel(document.getElementById('filtersPanel'),'filter');
@@ -4928,7 +4960,7 @@
   if(typeof originalPrepare==='function'){
     window.rc08PrepareCataloguePreview=function(card){
       originalPrepare(card);
-      [900,1400,2000,2800,3800].forEach(function(delay){setTimeout(ensureAllCataloguePreviewValues,delay);});
+      [300,700,1200,1800,2600,3600,4800].forEach(function(delay){setTimeout(ensureAllCataloguePreviewValues,delay);});
     };
   }
 
@@ -4967,5 +4999,52 @@
   },true);
 })();
 </script>
+<script id="generate-report-success-centre-fix">
+(function(){
+  'use strict';
+
+  // After a successful Generate Report action, show the requested success
+  // message and then take the user directly to Reports Centre.
+  document.addEventListener('click', function(event){
+    const generate = event.target && event.target.closest
+      ? event.target.closest('#btnGenerateReport')
+      : null;
+
+    if(!generate) return;
+
+    // Let the existing Generate Report handler finish first.
+    setTimeout(function(){
+      const successState = document.getElementById('builderSuccess');
+
+      // Only redirect when the existing success state confirms generation.
+      if(successState && successState.style.display !== 'none'){
+        if(typeof window.showToast === 'function'){
+          window.showToast('Reports generated successfully', 'success');
+        }else if(window.VP && VP.ui && typeof VP.ui.toast === 'function'){
+          VP.ui.toast('success', 'Reports generated successfully', '');
+        }else if(typeof window.toast === 'function'){
+          window.toast('Reports generated successfully', 'success');
+        }
+
+        if(typeof window.rc08Navigate === 'function'){
+          window.rc08Navigate('centre');
+        }else{
+          const centreLink = document.querySelector('[data-nav-view="centre"]');
+          if(centreLink){
+            centreLink.dispatchEvent(new MouseEvent('click', {
+              bubbles:true,
+              cancelable:true,
+              view:window
+            }));
+          }else{
+            location.hash = '#/centre';
+          }
+        }
+      }
+    }, 0);
+  }, false);
+})();
+</script>
+
 </body>
 </html>
