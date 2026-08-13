@@ -4967,52 +4967,5 @@
   },true);
 })();
 </script>
-<script id="generate-report-success-centre-fix">
-(function(){
-  'use strict';
-
-  // After a successful Generate Report action, show the requested success
-  // message and then take the user directly to Reports Centre.
-  document.addEventListener('click', function(event){
-    const generate = event.target && event.target.closest
-      ? event.target.closest('#btnGenerateReport')
-      : null;
-
-    if(!generate) return;
-
-    // Let the existing Generate Report handler finish first.
-    setTimeout(function(){
-      const successState = document.getElementById('builderSuccess');
-
-      // Only redirect when the existing success state confirms generation.
-      if(successState && successState.style.display !== 'none'){
-        if(typeof window.showToast === 'function'){
-          window.showToast('Reports generated successfully', 'success');
-        }else if(window.VP && VP.ui && typeof VP.ui.toast === 'function'){
-          VP.ui.toast('success', 'Reports generated successfully', '');
-        }else if(typeof window.toast === 'function'){
-          window.toast('Reports generated successfully', 'success');
-        }
-
-        if(typeof window.rc08Navigate === 'function'){
-          window.rc08Navigate('centre');
-        }else{
-          const centreLink = document.querySelector('[data-nav-view="centre"]');
-          if(centreLink){
-            centreLink.dispatchEvent(new MouseEvent('click', {
-              bubbles:true,
-              cancelable:true,
-              view:window
-            }));
-          }else{
-            location.hash = '#/centre';
-          }
-        }
-      }
-    }, 0);
-  }, false);
-})();
-</script>
-
 </body>
 </html>
