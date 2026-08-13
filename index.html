@@ -1551,6 +1551,26 @@
 #view-catalogue .rc13-loading { display: none !important; }
 </style>
 
+
+<style id="breadcrumb-only">
+  .page-breadcrumb {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:0 0 14px;
+    font-size:13px;
+    line-height:20px;
+    color:#667085;
+  }
+  .page-breadcrumb .current {
+    color:#101828;
+    font-weight:600;
+  }
+  .page-breadcrumb .sep {
+    color:#98A2B3;
+  }
+</style>
+
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -1717,6 +1737,11 @@
 
         <!-- ============ View: Report Catalogue ============ -->
         <section id="view-catalogue" class="view">
+
+<div class="page-breadcrumb" aria-label="Breadcrumb">
+  <span>Reporting</span><span class="sep">›</span><span class="current">Report Catalog</span>
+</div>
+
           <div class="page-head">
            
             <button class="btn btn-primary" id="btnCreateReport">
@@ -1862,6 +1887,11 @@
 
         <!-- ============ View: Reports Centre ============ -->
         <section id="view-centre" class="view">
+
+<div class="page-breadcrumb" aria-label="Breadcrumb">
+  <span>Reporting</span><span class="sep">›</span><span class="current">Report Center</span>
+</div>
+
           <div class="page-head">
              
             <button class="btn btn-secondary" id="btnRefreshCentre">
