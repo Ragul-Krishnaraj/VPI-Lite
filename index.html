@@ -1488,6 +1488,69 @@
 }
 </style>
 
+
+<style id="performance-and-execution-table-fix">
+/* Execution results: keep the table fully aligned and never create an inner scrollbar. */
+#view-centre .table-scroll {
+  overflow: visible !important;
+  width: 100% !important;
+}
+#view-centre .data-table {
+  width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+}
+#view-centre .data-table th,
+#view-centre .data-table td {
+  box-sizing: border-box;
+  vertical-align: middle !important;
+}
+#view-centre .data-table th:nth-child(1), #view-centre .data-table td:nth-child(1) { width: 13%; }
+#view-centre .data-table th:nth-child(2), #view-centre .data-table td:nth-child(2) { width: 27%; }
+#view-centre .data-table th:nth-child(3), #view-centre .data-table td:nth-child(3) { width: 14%; }
+#view-centre .data-table th:nth-child(4), #view-centre .data-table td:nth-child(4) { width: 14%; }
+#view-centre .data-table th:nth-child(5), #view-centre .data-table td:nth-child(5) { width: 13%; }
+#view-centre .data-table th:nth-child(6), #view-centre .data-table td:nth-child(6) { width: 9%; }
+#view-centre .data-table th:nth-child(7), #view-centre .data-table td:nth-child(7) { width: 10%; }
+/* Prevent the execution table itself from forcing page-level horizontal scrolling. */
+#view-centre .accordion-body, #view-centre .table-wrap { overflow: visible !important; }
+
+/* Keep generated CSV/PDF action buttons identical in size to the existing table actions. */
+
+/* Catalogue filters are local/in-memory; never show a loading state while a select is changed. */
+#view-catalogue select.input, #view-catalogue select {
+  contain: none !important;
+  transform: none !important;
+}
+#view-catalogue select.input option, #view-catalogue select option {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+#view-centre #centreCoreBody .rc08-generated-execution-row > td {
+  height: 84px !important;
+  padding: 14px 22px !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+  white-space: nowrap;
+}
+#view-centre #centreCoreBody .rc08-generated-execution-row .report-name-cell {
+  white-space: normal !important;
+  font-size: 14px !important;
+  line-height: 1.45 !important;
+}
+#view-centre #centreCoreBody .rc08-generated-execution-row .job-id-cell,
+#view-centre #centreCoreBody .rc08-generated-execution-row .started-cell,
+#view-centre #centreCoreBody .rc08-generated-execution-row .duration-cell {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+#view-centre #centreCoreBody .rc08-generated-execution-row .actions-cell {
+  text-align:right !important;
+}
+#view-catalogue .rc13-loading { display: none !important; }
+</style>
+
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -2749,7 +2812,7 @@
       b.type='button'; b.className='rc13-page-number'+(p===page?' is-current':''); b.textContent=p;
       b.setAttribute('role','listitem'); b.setAttribute('aria-label',`Go to page ${p}`);
       if(p===page) b.setAttribute('aria-current','page');
-      b.addEventListener('click',()=>goTo(p,true));
+      b.addEventListener('click',()=>goTo(p,false));
       wrap.appendChild(b);
     });
   }
@@ -2819,13 +2882,13 @@
 
   function schedule(reset){
     clearTimeout(renderTimer);
-    renderTimer=setTimeout(()=>{
+    renderTimer=requestAnimationFrame(()=>{
       if(reset){
         state().page=1;
         invalidateEligibility();
       }
       apply();
-    },90);
+    });
   }
 
   function goTo(page,loading){
@@ -2834,7 +2897,7 @@
     state().page=Math.max(1,Math.min(page,pages));
     if(loading) setLoading(true);
     apply();
-    document.getElementById('rc13Navigation')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+    /* Do not scroll the page when changing pagination. */
   }
 
   function resetFromCriteria(){ schedule(true); }
@@ -2842,20 +2905,28 @@
   function init(){
     const g=grid(); if(!g) return;
     const ps=document.getElementById('rc13PageSize'), sort=document.getElementById('rc13Sort');
-    ps?.addEventListener('change',()=>{ state().pageSize=Number(ps.value)||8; state().page=1; setLoading(true); apply(); });
-    sort?.addEventListener('change',()=>{ state().sort=sort.value||'name-asc'; state().page=1; setLoading(true); apply(); });
-    document.getElementById('rc13First')?.addEventListener('click',()=>goTo(1,true));
-    document.getElementById('rc13Prev')?.addEventListener('click',()=>goTo(state().page-1,true));
-    document.getElementById('rc13Next')?.addEventListener('click',()=>goTo(state().page+1,true));
+    ps?.addEventListener('change',()=>{ state().pageSize=Number(ps.value)||8; state().page=1; apply(); });
+    sort?.addEventListener('change',()=>{ state().sort=sort.value||'name-asc'; state().page=1; apply(); });
+    document.getElementById('rc13First')?.addEventListener('click',()=>goTo(1,false));
+    document.getElementById('rc13Prev')?.addEventListener('click',()=>goTo(state().page-1,false));
+    document.getElementById('rc13Next')?.addEventListener('click',()=>goTo(state().page+1,false));
     document.getElementById('rc13Last')?.addEventListener('click',()=>{
       const total=cards().filter(c=>c.dataset.rc13FilteredVisible!=='false').length;
-      goTo(Math.max(1,Math.ceil(total/state().pageSize)),true);
+      goTo(Math.max(1,Math.ceil(total/state().pageSize)),false);
     });
 
     // Search/filter changes must always return to page one.
     ['catalogueSearch','filter-rail','filter-category','filter-region','filter-frequency','filter-author'].forEach(id=>{
       const el=document.getElementById(id); if(!el) return;
-      el.addEventListener(el.tagName==='INPUT'?'input':'change',resetFromCriteria);
+      if(el.tagName==='INPUT'){
+        el.addEventListener('input',resetFromCriteria);
+      }else{
+        el.addEventListener('change',()=>{
+          state().page=1;
+          invalidateEligibility();
+          apply();
+        });
+      }
     });
 
     // Catalogue tabs retain their own page/sort state.
@@ -2896,13 +2967,13 @@
 
     // Keyboard navigation: Left/Right moves between pages when pagination has focus.
     document.getElementById('rc13Pagination')?.addEventListener('keydown',e=>{
-      if(e.key==='ArrowRight'){e.preventDefault();goTo(state().page+1,true);}
-      if(e.key==='ArrowLeft'){e.preventDefault();goTo(state().page-1,true);}
-      if(e.key==='Home' && (e.ctrlKey||e.metaKey)){e.preventDefault();goTo(1,true);}
+      if(e.key==='ArrowRight'){e.preventDefault();goTo(state().page+1,false);}
+      if(e.key==='ArrowLeft'){e.preventDefault();goTo(state().page-1,false);}
+      if(e.key==='Home' && (e.ctrlKey||e.metaKey)){e.preventDefault();goTo(1,false);}
       if(e.key==='End' && (e.ctrlKey||e.metaKey)){
         e.preventDefault();
         const total=cards().filter(c=>c.dataset.rc13FilteredVisible!=='false').length;
-        goTo(Math.max(1,Math.ceil(total/state().pageSize)),true);
+        goTo(Math.max(1,Math.ceil(total/state().pageSize)),false);
       }
     });
   }
@@ -3215,7 +3286,18 @@
   }
 
   function ensurePortalMenu(){
-    if(document.getElementById('rc08PortalMenu')) return;
+    const existing=document.getElementById('rc08PortalMenu');
+    if(existing){
+      if(!existing.querySelector('[data-action="delete"]')){
+        const divider=document.createElement('div');
+        divider.className='rc08-menu-divider';
+        const del=document.createElement('button');
+        del.type='button'; del.className='rc08-menu-item danger'; del.dataset.action='delete'; del.setAttribute('role','menuitem');
+        del.innerHTML='<span class="rc08-menu-icon">⌫</span>Delete';
+        existing.appendChild(divider); existing.appendChild(del);
+      }
+      return;
+    }
     const menu=document.createElement('div');
     menu.id='rc08PortalMenu';
     menu.setAttribute('role','menu');
@@ -3228,6 +3310,8 @@
       <button type="button" class="rc08-menu-item" data-action="edit" role="menuitem"><span class="rc08-menu-icon">✎</span>Edit</button>
       <div class="rc08-menu-divider"></div>
       <button type="button" class="rc08-menu-item" data-action="details" role="menuitem"><span class="rc08-menu-icon">ⓘ</span>View Details</button>
+      <div class="rc08-menu-divider"></div>
+      <button type="button" class="rc08-menu-item danger" data-action="delete" role="menuitem"><span class="rc08-menu-icon">⌫</span>Delete</button>
       <button type="button" class="rc08-menu-item danger" data-action="favourite" role="menuitem"><span class="rc08-menu-icon">☆</span><span data-favourite-label>Favourite</span></button>
     `;
     document.body.appendChild(menu);
@@ -3292,6 +3376,11 @@
 
     menu.querySelector('[data-action="edit"]').disabled=!canEdit;
     menu.querySelector('[data-action="edit"]').title=canEdit?'Edit report':'Edit available only to owner or administrator';
+    const deleteItem=menu.querySelector('[data-action="delete"]');
+    if(deleteItem){
+      deleteItem.disabled=isSystem;
+      deleteItem.title=isSystem?'System reports cannot be deleted':'Delete report';
+    }
     menu.querySelector('[data-favourite-label]').textContent=isFav?'Unfavourite':'Favourite';
     menu.querySelector('[data-action="favourite"] .rc08-menu-icon').textContent=isFav?'★':'☆';
 
@@ -3410,19 +3499,10 @@
     const body=document.getElementById('rc08WorkspaceBody');
     const footer=document.getElementById('rc08WorkspaceFooter');
 
+    // Preview is no longer shown in the Report Workspace modal. Preview is handled by the real Report Builder.
     if(mode==='preview'){
-      body.innerHTML=`
-        <div class="rc08-workspace-grid">
-          <div class="rc08-field full"><span class="rc08-label">Description</span><span class="rc08-value">${esc(m.description)}</span></div>
-          <div class="rc08-field"><span class="rc08-label">Classification</span><span class="rc08-value">${esc(m.classification)}</span></div>
-          <div class="rc08-field"><span class="rc08-label">Lifecycle</span><span class="rc08-value">${esc(m.lifecycle)}</span></div>
-          <div class="rc08-field"><span class="rc08-label">Category</span><span class="rc08-value">${esc(m.category)}</span></div>
-          <div class="rc08-field"><span class="rc08-label">Rail</span><span class="rc08-value">${esc(m.rail)}</span></div>
-          <div class="rc08-field"><span class="rc08-label">Region</span><span class="rc08-value">${esc(m.region)}</span></div>
-          <div class="rc08-field"><span class="rc08-label">Execution Frequency</span><span class="rc08-value">${esc(m.frequency)}</span></div>
-          <div class="rc08-field"><span class="rc08-label">Owner</span><span class="rc08-value">${esc(m.owner)}</span></div>
-        </div>`;
-      footer.innerHTML=`<button class="rc08-btn" data-workspace-close>Close</button><button class="rc08-btn primary" data-workspace-action="execute">Execute Report</button>`;
+      closeWorkspace();
+      return;
     }
 
     if(mode==='execute'){
@@ -3495,6 +3575,380 @@
     activeWorkspaceCard=null;
   }
 
+  function rc08Navigate(view){
+    const link=document.querySelector('[data-nav-view="'+view+'"]');
+    if(link){
+      link.dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true,view:window}));
+    }else{
+      location.hash='#/'+view;
+    }
+  }
+
+  function rc08TextMatch(root,text){
+    const wanted=String(text||'').trim().toLowerCase();
+    if(!root || !wanted) return null;
+    const nodes=Array.from(root.querySelectorAll('button,a,label,[role="button"],[role="option"],div,span'));
+    return nodes.find(el=>{
+      const value=(el.textContent||'').replace(/\\s+/g,' ').trim().toLowerCase();
+      return value===wanted;
+    }) || nodes.find(el=>{
+      const value=(el.textContent||'').replace(/\\s+/g,' ').trim().toLowerCase();
+      return value.includes(wanted);
+    }) || null;
+  }
+
+  function rc08ClickText(root,text){
+    const el=rc08TextMatch(root,text);
+    if(el){ el.click(); return true; }
+    return false;
+  }
+
+  function rc08BuilderStep(step){
+    const rail=document.getElementById('stepRail');
+    if(!rail) return false;
+    const items=Array.from(rail.children);
+    const item=items[step-1];
+    if(!item) return false;
+    const clickable=item.matches('button,a,[role="button"]') ? item : item.querySelector('button,a,[role="button"]');
+    if(clickable){ clickable.click(); return true; }
+    item.click(); return true;
+  }
+
+  function rc08ExactText(root,text){
+    const wanted=String(text||'').trim().toLowerCase();
+    if(!root || !wanted) return null;
+    const els=Array.from(root.querySelectorAll('button,label,[role="option"],[role="button"],span,div'));
+    return els.find(el=>{
+      const t=(el.textContent||'').replace(/\s+/g,' ').trim().toLowerCase();
+      return t===wanted;
+    }) || null;
+  }
+
+  function rc08IsSelected(el){
+    if(!el) return false;
+    const input=el.matches('input') ? el : el.querySelector('input[type="checkbox"]');
+    if(input) return !!input.checked;
+    return el.getAttribute('aria-selected')==='true' ||
+           el.getAttribute('aria-pressed')==='true' ||
+           el.classList.contains('selected') ||
+           el.classList.contains('is-selected') ||
+           el.classList.contains('active');
+  }
+
+  function rc08ClickFieldByName(root,name){
+    const el=rc08ExactText(root,name);
+    if(!el) return false;
+    if(rc08IsSelected(el)) return true;
+    const target=el.closest('label,button,[role="option"],[role="button"]') || el;
+    target.click();
+    return true;
+  }
+
+  function rc08WaitForBuilderReady(done,tries=0){
+    const ready=document.getElementById('dataSourcePicker') && document.getElementById('stepRail');
+    if(ready){ done(); return; }
+    if(tries>40) return;
+    setTimeout(()=>rc08WaitForBuilderReady(done,tries+1),100);
+  }
+
+  function rc08SelectBuilderFields(mode,attempt=0){
+    const source=document.getElementById('dataSourcePicker');
+    if(!source){ if(attempt<40) setTimeout(()=>rc08SelectBuilderFields(mode,attempt+1),100); return; }
+
+    // Select the required dataset first.
+    const sourceControl=rc08ExactText(source,'Payment Transactions');
+    if(sourceControl && !rc08IsSelected(sourceControl)){
+      (sourceControl.closest('button,label,[role="option"],[role="button"]') || sourceControl).click();
+    }
+
+    // Wait until the field controls are rendered after the dataset selection.
+    setTimeout(()=>{
+      const picker=document.getElementById('dataSourcePicker');
+      const selected=document.getElementById('selectedFieldsList');
+      if(!picker || !selected) return;
+
+      if(mode==='clone'){
+        // Clone requirement: Payment Transactions dataset + ONLY Amount selected.
+        const amount=rc08ExactText(picker,'Amount') || rc08ExactText(document.getElementById('view-builder'),'Amount');
+        if(amount && !amount.closest('#selectedFieldsList')){
+          const target=amount.closest('label,button,[role="option"],[role="button"]') || amount;
+          if(!rc08IsSelected(target)) target.click();
+        }else if(attempt<12){
+          // The wizard may render its field list asynchronously after the dataset click.
+          setTimeout(()=>rc08SelectBuilderFields(mode,attempt+1),150);
+          return;
+        }
+      }else{
+        // Preview requirement: select ALL available fields for Payment Transactions.
+        const candidates=Array.from(picker.querySelectorAll('label,button,[role="option"],[role="button"]'));
+        candidates.forEach(el=>{
+          const txt=(el.textContent||'').replace(/\s+/g,' ').trim();
+          if(!txt || /^payment transactions$/i.test(txt)) return;
+          // Only click field-like controls, not containers containing many fields.
+          const input=el.matches('input[type="checkbox"]') ? el : el.querySelector('input[type="checkbox"]');
+          const looksField=!!input || el.getAttribute('role')==='option' || el.tagName==='LABEL' || el.tagName==='BUTTON';
+          if(looksField && !rc08IsSelected(el)) el.click();
+        });
+        picker.querySelectorAll('input[type="checkbox"]').forEach(cb=>{ if(!cb.checked) cb.click(); });
+      }
+    },350);
+  }
+
+  function rc08GoToStep6(attempt=0){
+    const panel=document.getElementById('step-6-panel');
+    if(panel && getComputedStyle(panel).display!=='none') return true;
+
+    // Prefer the actual step-6 rail item.
+    if(attempt===0) rc08BuilderStep(6);
+
+    setTimeout(()=>{
+      const p=document.getElementById('step-6-panel');
+      if(p && getComputedStyle(p).display!=='none') return;
+      const next=document.getElementById('btnNextStep');
+      if(next && attempt<8){ next.click(); setTimeout(()=>rc08GoToStep6(attempt+1),180); }
+    },180);
+    return false;
+  }
+
+  function rc08OpenBuilderWithSelection(mode,card,requestedName){
+    const m=meta(card);
+    const name=requestedName || (mode==='clone' ? (m.name+' - Copy') : m.name);
+
+    closeWorkspace();
+    rc08Navigate('builder');
+
+    // Wait for the real Report Builder/wizard to initialize before touching its controls.
+    rc08WaitForBuilderReady(()=>{
+      const reportName=document.getElementById('reportNameInput');
+      if(reportName){
+        reportName.value=name;
+        reportName.dispatchEvent(new Event('input',{bubbles:true}));
+        reportName.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+
+      // Always start from Step 1 so the dataset/field selection is deterministic.
+      rc08BuilderStep(1);
+      // Do not carry stale selections into Clone/Preview. The builder itself remains the source of truth
+      // for filter, conditions, summary, calculation and scheduling data.
+      const clearBtn=document.getElementById('btnClearFields');
+      if(clearBtn) clearBtn.click();
+      rc08SelectBuilderFields(mode);
+
+      if(mode==='preview'){
+        // Preview uses the real Step 6 preview. The selected fields feed the live sample rows there;
+        // the other builder sections remain available with their existing data/configuration.
+        setTimeout(()=>rc08GoToStep6(0),1100);
+      }
+    });
+  }
+
+  /* Catalogue Preview mode: open the actual builder with a realistic, editable configuration.
+     This is intentionally separate from the normal Create New Report path, which stays empty. */
+  function rc08SetControlValue(el,value){
+    if(!el) return;
+    if(el.type==='checkbox' || el.type==='radio'){
+      el.checked=!!value;
+      el.dispatchEvent(new Event('change',{bubbles:true}));
+      return;
+    }
+    el.value=String(value);
+    el.dispatchEvent(new Event(el.tagName==='INPUT'?'input':'change',{bubbles:true}));
+  }
+
+  function rc08PickFirstRealOption(select){
+    if(!select || !select.options || !select.options.length) return false;
+    const options=Array.from(select.options);
+    const option=options.find(o=>!o.disabled && String(o.value||'').trim() && !/^(select|choose|none|--)/i.test(String(o.textContent||''))) || options.find(o=>!o.disabled);
+    if(!option) return false;
+    rc08SetControlValue(select,option.value);
+    return true;
+  }
+
+  function rc08FillPanel(panel,stepKey){
+    if(!panel) return;
+    const controls=Array.from(panel.querySelectorAll('input,select,textarea')).filter(el=>!el.disabled && el.type!=='hidden');
+    const today=new Date().toISOString().slice(0,10);
+    const values={
+      filter:'ACH', condition:'500000', calculation:'100', schedule:'Daily'
+    };
+
+    controls.forEach((el,index)=>{
+      if(el.tagName==='SELECT'){
+        // Keep existing values; otherwise select a valid real option so the field is visibly prefilled.
+        if(!String(el.value||'').trim()) rc08PickFirstRealOption(el);
+        return;
+      }
+      if(el.type==='checkbox' || el.type==='radio') return;
+      if(String(el.value||'').trim()) return;
+
+      const hint=((el.id||'')+' '+(el.name||'')+' '+(el.placeholder||'')+' '+(el.getAttribute('aria-label')||'')).toLowerCase();
+      if(el.type==='date' || /date|start|end/.test(hint)) rc08SetControlValue(el,today);
+      else if(el.type==='time') rc08SetControlValue(el,'09:00');
+      else if(el.type==='number') rc08SetControlValue(el,values.calculation);
+      else if(el.tagName==='TEXTAREA') rc08SetControlValue(el,'Review payment return exceptions for the selected reporting period.');
+      else if(/value|amount|threshold|limit|condition/.test(hint)) rc08SetControlValue(el,values.condition);
+      else if(/rail|payment|type|status|field/.test(hint)) rc08SetControlValue(el,'ACH');
+      else if(/name|label|title/.test(hint)) rc08SetControlValue(el,'ACH Return & Exception Report');
+      else rc08SetControlValue(el,stepKey==='schedule'?'09:00':'Sample value');
+    });
+
+    // If a radio/checkbox group is present, make one sensible choice when the group is empty.
+    const groups={};
+    panel.querySelectorAll('input[type="radio"],input[type="checkbox"]').forEach(el=>{
+      if(el.disabled) return;
+      const key=el.name || el.type+'-'+stepKey;
+      (groups[key] ||= []).push(el);
+    });
+    Object.values(groups).forEach(group=>{
+      if(!group.some(x=>x.checked)) rc08SetControlValue(group[0],true);
+    });
+  }
+
+  function rc08PrepareCataloguePreview(card){
+    const m=meta(card);
+    closeWorkspace();
+    closeOverview();
+    rc08Navigate('builder');
+
+    rc08WaitForBuilderReady(()=>{
+      const name=document.getElementById('reportNameInput');
+      const access=document.getElementById('reportAccessSelect');
+      const badge=document.getElementById('builderModeBadge');
+      if(name){ rc08SetControlValue(name,m.name || 'ACH Return & Exception Report'); }
+      if(access){
+        const desired=(String(m.classification||'').toLowerCase()==='private')?'private':'all';
+        access.value=desired; access.dispatchEvent(new Event('change',{bubbles:true}));
+      }
+      if(badge) badge.textContent='Preview';
+
+      rc08BuilderStep(1);
+      document.getElementById('btnClearFields')?.click();
+      rc08SelectBuilderFields('preview');
+
+      // Give the field renderer time to finish, then populate each real builder section.
+      setTimeout(()=>{
+        const steps=[
+          [1,'step-1-panel','fields'],
+          [2,'step-3-panel','filters'],
+          [3,'step-4-panel','conditions'],
+          [4,'step-6-panel','calculations'],
+          [5,'step-7-panel','schedule'],
+          [6,'step-8-panel','preview']
+        ];
+        let i=0;
+        const advance=()=>{
+          if(i>=steps.length){
+            // The screenshot-style final preview is the last builder step.
+            rc08BuilderStep(6);
+            // wizard.js normally renders the final preview asynchronously. Catalogue Preview
+            // must always show a populated table, so provide the preview rows here as well.
+            setTimeout(()=>rc08RenderCatalogueFinalPreview(card),250);
+            return;
+          }
+          const [,panelId,key]=steps[i++];
+          rc08BuilderStep(steps[i-1][0]);
+          setTimeout(()=>{
+            rc08FillPanel(document.getElementById(panelId),key);
+            setTimeout(advance,180);
+          },260);
+        };
+        advance();
+      },750);
+    });
+  }
+
+  function rc08RenderCatalogueFinalPreview(card){
+    const panel=document.getElementById('finalPreviewPanel');
+    if(!panel) return;
+    const m=meta(card);
+    const reportName=(m.name || document.getElementById('reportNameInput')?.value || 'ACH Return & Exception Report').trim();
+    const rows=[
+      ['TRANSACTION-100000','889406.75'],
+      ['TRANSACTION-100001','118944.32'],
+      ['TRANSACTION-100002','406926.77'],
+      ['TRANSACTION-100003','277945.54'],
+      ['TRANSACTION-100004','390475.51'],
+      ['TRANSACTION-100005','231536.72'],
+      ['TRANSACTION-100006','347430.54'],
+      ['TRANSACTION-100007','674774.15']
+    ];
+    panel.innerHTML=`
+      <div class="final-preview-summary" style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:18px;margin:0 0 18px;padding:18px;border:1px solid #d9dee7;border-radius:10px;background:#fff;">
+        <div><div class="builder-stat-label">REPORT</div><div style="font-weight:700;margin-top:6px;">${esc(reportName)}</div></div>
+        <div><div class="builder-stat-label">FIELDS</div><div style="font-weight:700;margin-top:6px;">2</div></div>
+        <div><div class="builder-stat-label">FILTERS</div><div style="font-weight:700;margin-top:6px;">0</div></div>
+        <div><div class="builder-stat-label">DELIVERY</div><div style="font-weight:700;margin-top:6px;">Download</div></div>
+      </div>
+      <div class="table-wrap" style="border:1px solid #d9dee7;border-radius:10px;overflow:hidden;background:#fff;">
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead><tr><th>TRANSACTION_ID</th><th>AMOUNT</th></tr></thead>
+            <tbody>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join('')}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }
+
+  // Clear previously stored/demo execution rows. The Created Reports Executions table
+  // starts empty and receives rows only after a report is executed in this session.
+  (function rc08ClearOldExecutionRows(){
+    try{
+      localStorage.removeItem('vpiLiteExecutionJobs');
+      localStorage.removeItem('vpiLiteNextReportJobId');
+    }catch(e){}
+  })();
+
+  function rc08RenderExecutionJobs(){
+    const body=document.getElementById('centreCoreBody');
+    if(!body) return;
+    let jobs=[];
+    try{ jobs=JSON.parse(localStorage.getItem('vpiLiteExecutionJobs')||'[]'); }catch(e){ jobs=[]; }
+
+    body.querySelectorAll('[data-rc08-execution-job="true"]').forEach(row=>row.remove());
+    const frag=document.createDocumentFragment();
+    jobs.forEach(job=>{
+      const tr=document.createElement('tr');
+      tr.dataset.rc08ExecutionJob='true';
+      tr.dataset.rc08JobId=job.id;
+      tr.className='rc08-generated-execution-row';
+      tr.innerHTML=`
+        <td class="job-id-cell">${esc(job.id)}</td>
+        <td class="report-name-cell"><strong>${esc(job.name)}</strong></td>
+        <td class="status-cell"><span class="status-pill status-completed">Completed</span></td>
+        <td class="progress-cell"><div class="mini-progress"><span style="width:100%"></span></div></td>
+        <td class="started-cell">${esc(job.startedAt)}</td>
+        <td class="duration-cell">${esc(job.duration)}</td>
+        <td class="actions-cell">
+          <div style="display: flex; gap: 8px;">
+            <button class="icon-btn" type="button" onclick="window.appToast && window.appToast.show('Downloading CSV...', 'info')" title="Download CSV" aria-label="Download CSV">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="download" aria-hidden="true" class="lucide lucide-download"><path d="M12 15V3"></path><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="m7 10 5 5 5-5"></path></svg>
+            </button>
+            <button class="icon-btn" type="button" title="Download PDF" aria-label="Download PDF">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="file-text" aria-hidden="true" class="lucide lucide-file-text"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"></path><path d="M14 2v5a1 1 0 0 0 1 1h5"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>
+            </button>
+          </div>
+        </td>`;
+      frag.appendChild(tr);
+    });
+    body.appendChild(frag);
+  }
+
+  // Kept for compatibility with older callers; generated rows intentionally use
+  // the native data-table styling and need no special CSS.
+  function rc08AddExecutionRowStyles(){}
+
+  function rc08AddExecutionJob(m,startedAt,duration){
+    const idNum=parseInt(String(localStorage.getItem('vpiLiteNextReportJobId')||'33200'),10) || 33200;
+    localStorage.setItem('vpiLiteNextReportJobId',String(idNum+1));
+    // Keep the generated execution values in the same format as the existing rows.
+    const job={id:'#RP-'+String(idNum),name:m.name,startedAt,duration};
+    let jobs=[];
+    try{ jobs=JSON.parse(localStorage.getItem('vpiLiteExecutionJobs')||'[]'); }catch(e){ jobs=[]; }
+    jobs.unshift(job);
+    localStorage.setItem('vpiLiteExecutionJobs',JSON.stringify(jobs.slice(0,50)));
+    rc08RenderExecutionJobs();
+  }
+
   function completeWorkspaceAction(action,card){
     const m=meta(card);
 
@@ -3507,8 +3961,23 @@
       const freq=document.getElementById('rc08ExecutionFrequency')?.value || 'One-time (Ad Hoc)';
       const period=document.getElementById('rc08ReportingPeriod')?.value || 'Today (Live)';
       const format=document.getElementById('rc08OutputFormat')?.value || 'CSV Export';
-      toast('Execution started: '+m.name+' • '+period+' • '+format,'success');
+      const now=new Date();
+      // Existing execution rows display a calendar date plus time and a seconds duration.
+      const startedAt=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}).format(now);
+      rc08AddExecutionJob(m,startedAt,'133s');
+      toast('Report executed: '+m.name+' • '+period+' • '+format,'success');
       closeWorkspace();
+      rc08Navigate('centre');
+      // Reports Centre renders asynchronously; keep injecting the new execution until its table exists.
+      let tries=0;
+      const showJob=()=>{
+        rc08RenderExecutionJobs();
+        tries++;
+        if(tries<20 && JSON.parse(localStorage.getItem('vpiLiteExecutionJobs')||'[]')[0]?.id && !document.querySelector('#centreCoreBody [data-rc08-job-id="'+CSS.escape(JSON.parse(localStorage.getItem('vpiLiteExecutionJobs')||'[]')[0].id)+'"]')){
+          setTimeout(showJob,100);
+        }
+      };
+      setTimeout(showJob,100);
       return;
     }
 
@@ -3524,28 +3993,10 @@
 
     if(action==='confirm-clone'){
       const name=document.getElementById('rc08CloneName')?.value.trim() || (m.name+' - Copy');
-      const clone=card.cloneNode(true);
-      clone.dataset.reportId=m.id+'-CLONE';
-      clone.dataset.reportName=name;
-      clone.classList.remove('rc07-card-ready');
-      clone.dataset.reportId=m.id+'-CLONE';
-      clone.dataset.reportName=name;
-      clone.dataset.classification=m.classification;
-      clone.dataset.lifecycle='Draft';
-      clone.dataset.category=m.category;
-      clone.dataset.rail=m.rail;
-      clone.dataset.region=m.region;
-      clone.dataset.frequency=m.frequency;
-      clone.dataset.owner=CURRENT_USER;
-      clone.dataset.description=m.description;
-      clone.querySelectorAll('.rc07-extra,.rc07-lifecycle-chip,.rc08-action-group').forEach(el=>el.remove());
-      const title=clone.querySelector('.report-card-title,.card-title,.report-name,h1,h2,h3,h4,h5');
-      if(title) title.textContent=name;
-      const grid=document.getElementById('catalogueGrid');
-      if(grid) grid.insertBefore(clone,grid.firstChild);
-      toast('Clone created: '+name,'success');
       closeWorkspace();
-      setTimeout(enhanceAll,50);
+      // Clone is a builder action: open the real Create Report page and preselect
+      // Payment Transactions + Amount. Do not add a duplicate catalogue card.
+      rc08OpenBuilderWithSelection('clone',card,name);
       return;
     }
 
@@ -3573,20 +4024,84 @@
        CURRENT_ROLE.toLowerCase().includes('administrator'));
   }
 
+
+  let pendingDeleteReportCard=null;
+
+  function ensureDeleteReportModal(){
+    if(document.getElementById('rc08DeleteReportModal')) return;
+    const el=document.createElement('div');
+    el.id='rc08DeleteReportModal';
+    el.className='modal-overlay';
+    el.style.zIndex='10050';
+    el.innerHTML=`
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="rc08DeleteReportTitle" style="max-width:440px;">
+        <div class="modal-header">
+          <span class="modal-title" id="rc08DeleteReportTitle">Delete Report</span>
+          <button class="modal-close" type="button" data-delete-report-cancel aria-label="Close">×</button>
+        </div>
+        <div class="modal-body">
+          <p style="margin:0 0 8px;font-weight:600;">Are you sure you want to delete this report?</p>
+          <p id="rc08DeleteReportName" style="margin:0;color:#667085;"></p>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;padding:16px 20px;border-top:1px solid #eaecf0;">
+          <button class="btn btn-secondary" type="button" data-delete-report-cancel>Cancel</button>
+          <button class="btn btn-danger" type="button" id="rc08DeleteReportConfirm">Delete</button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    el.addEventListener('click',e=>{
+      if(e.target===el || e.target.closest('[data-delete-report-cancel]')) closeDeleteReportConfirmation();
+      if(e.target.closest('#rc08DeleteReportConfirm')) confirmDeleteReport();
+    });
+  }
+
+  function openDeleteReportConfirmation(card){
+    ensureDeleteReportModal();
+    pendingDeleteReportCard=card;
+    const m=meta(card);
+    const name=document.getElementById('rc08DeleteReportName');
+    if(name) name.textContent=m.name;
+    document.getElementById('rc08DeleteReportModal').classList.add('is-open');
+    setTimeout(()=>document.getElementById('rc08DeleteReportConfirm')?.focus(),0);
+  }
+
+  function closeDeleteReportConfirmation(){
+    document.getElementById('rc08DeleteReportModal')?.classList.remove('is-open');
+    pendingDeleteReportCard=null;
+  }
+
+  function confirmDeleteReport(){
+    const card=pendingDeleteReportCard;
+    if(!card) return;
+    const m=meta(card);
+    card.remove();
+    closeDeleteReportConfirmation();
+    toast('Report deleted: '+m.name,'success');
+  }
+
   function runAction(action,card){
     if(action==='preview'){
-      openWorkspace('preview',card);
+      rc08PrepareCataloguePreview(card);
     }else if(action==='execute'){
       openWorkspace('execute',card);
     }else if(action==='schedule'){
       openWorkspace('schedule',card);
     }else if(action==='clone'){
-      openWorkspace('clone',card);
+      // Clone must open the Report Builder directly with Payment Transactions > Amount selected.
+      rc08OpenBuilderWithSelection('clone',card);
     }else if(action==='edit'){
       if(canEdit(card)) openWorkspace('edit',card);
       else toast('Edit is available only to the report owner or administrator','error');
     }else if(action==='details'){
-      openOverview(card);
+      // View Details now opens only the Report Builder page.
+      rc08OpenBuilderWithSelection('details',card);
+    }else if(action==='delete'){
+      const m=meta(card);
+      if(String(m.classification||'').toLowerCase()==='system'){
+        toast('System reports cannot be deleted','error');
+        return;
+      }
+      openDeleteReportConfirmation(card);
     }else if(action==='favourite'){
       toggleFavourite(card);
     }
@@ -3754,7 +4269,7 @@
       event.stopImmediatePropagation();
       const card = activeCardForOverview;
       closeOverview();
-      openWorkspace('preview', card);
+      rc08PrepareCataloguePreview(card);
       return;
     }
 
@@ -3769,8 +4284,8 @@
 
   function init(){
     ensurePortalMenu();
-    ensureOverview();
     ensureWorkspace();
+    ensureDeleteReportModal();
 
     const grid=document.getElementById('catalogueGrid');
     if(!grid) return;
@@ -4264,6 +4779,192 @@
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fix);else fix();
  const g=document.getElementById('catalogueGrid');
  if(g)new MutationObserver(fix).observe(g,{childList:true,subtree:true});
+})();
+</script>
+
+<!-- Catalogue Preview mode is implemented in rc07-rc08-final-script: it pre-fills the real builder only when entered from Report Catalogue Preview. -->
+<script id="rc14-catalogue-preview-selection-fix">
+(function(){
+  'use strict';
+
+  function validOption(select){
+    if(!select || !select.options) return null;
+    return Array.from(select.options).find(function(o){
+      var v=String(o.value||'').trim();
+      var t=String(o.textContent||'').trim();
+      return !o.disabled && v && !/^(select|choose|none|--)/i.test(t);
+    }) || null;
+  }
+
+  function fire(el, type){
+    try{ el.dispatchEvent(new Event(type || (el.tagName==='INPUT'?'input':'change'), {bubbles:true})); }catch(e){}
+  }
+
+  function chooseSelect(select){
+    if(!select || select.disabled) return false;
+    if(String(select.value||'').trim()) return true;
+    var option=validOption(select);
+    if(!option) return false;
+    select.value=option.value;
+    fire(select,'change');
+    return true;
+  }
+
+  function chooseGroups(panel){
+    var groups={};
+    panel.querySelectorAll('input[type="radio"],input[type="checkbox"]').forEach(function(el){
+      if(el.disabled) return;
+      var key=el.name || el.type;
+      (groups[key] ||= []).push(el);
+    });
+    Object.keys(groups).forEach(function(key){
+      var group=groups[key];
+      if(!group.some(function(x){return x.checked;})){
+        group[0].checked=true;
+        fire(group[0],'change');
+      }
+    });
+  }
+
+  function fillRequiredPanel(panel, kind){
+    if(!panel) return;
+    panel.querySelectorAll('select').forEach(chooseSelect);
+    chooseGroups(panel);
+
+    var fallback={
+      filter:'ACH',
+      condition:'500000',
+      calculation:'100'
+    }[kind] || 'Sample value';
+
+    panel.querySelectorAll('input,textarea').forEach(function(el){
+      if(el.disabled || el.type==='hidden' || el.type==='checkbox' || el.type==='radio') return;
+      if(String(el.value||'').trim()) return;
+      var hint=((el.id||'')+' '+(el.name||'')+' '+(el.placeholder||'')+' '+(el.getAttribute('aria-label')||'')).toLowerCase();
+      if(el.type==='number') el.value=kind==='calculation'?'100':'500000';
+      else if(el.type==='date') el.value=new Date().toISOString().slice(0,10);
+      else if(el.type==='time') el.value='09:00';
+      else if(/amount|threshold|limit|value|condition/.test(hint)) el.value='500000';
+      else if(/field|type|status|rail|payment/.test(hint)) el.value='ACH';
+      else el.value=fallback;
+      fire(el,el.tagName==='TEXTAREA'?'input':'input');
+      fire(el,'change');
+    });
+  }
+
+  function ensureAllCataloguePreviewValues(){
+    var picker=document.getElementById('dataSourcePicker');
+    if(picker){
+      // Preview must contain every available field from the selected dataset.
+      picker.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
+        if(!cb.disabled && !cb.checked){ cb.checked=true; fire(cb,'change'); }
+      });
+      picker.querySelectorAll('label,button,[role="option"],[role="button"]').forEach(function(el){
+        var input=el.matches('input[type="checkbox"]')?el:el.querySelector('input[type="checkbox"]');
+        var text=(el.textContent||'').replace(/\s+/g,' ').trim();
+        if(input && !input.disabled && !input.checked && text && !/^payment transactions$/i.test(text)) el.click();
+      });
+    }
+
+    fillRequiredPanel(document.getElementById('filtersPanel'),'filter');
+    fillRequiredPanel(document.getElementById('conditionsPanel'),'condition');
+    fillRequiredPanel(document.getElementById('calcConfigPanel'),'calculation');
+    fillRequiredPanel(document.getElementById('schedulePanel'),'schedule');
+
+    // Re-fire changes after all dependent controls have been populated.
+    ['filtersPanel','conditionsPanel','calcConfigPanel','schedulePanel'].forEach(function(id){
+      var panel=document.getElementById(id);
+      if(!panel) return;
+      panel.querySelectorAll('select,input,textarea').forEach(function(el){
+        if(!el.disabled) fire(el,el.tagName==='INPUT'?'input':'change');
+      });
+    });
+  }
+
+  function getSelectedFieldCount(){
+    var list=document.getElementById('selectedFieldsList');
+    if(!list) return 0;
+    var checked=list.querySelectorAll('input[type="checkbox"]:checked').length;
+    if(checked) return checked;
+    return Array.from(list.children).filter(function(el){return el.textContent.trim();}).length;
+  }
+
+  function panelComplete(id){
+    var panel=document.getElementById(id);
+    if(!panel) return false;
+    var controls=Array.from(panel.querySelectorAll('select,input,textarea')).filter(function(el){
+      return !el.disabled && el.type!=='hidden';
+    });
+    var selectsOk=controls.filter(function(el){return el.tagName==='SELECT';}).every(function(el){return String(el.value||'').trim()!=='';});
+    var textOk=controls.filter(function(el){return el.tagName!=='SELECT' && el.type!=='checkbox' && el.type!=='radio';}).every(function(el){return String(el.value||'').trim()!=='';});
+    var groups={};
+    controls.filter(function(el){return el.type==='checkbox'||el.type==='radio';}).forEach(function(el){(groups[el.name||el.type] ||= []).push(el);});
+    var groupsOk=Object.keys(groups).every(function(k){return groups[k].some(function(el){return el.checked;});});
+    return selectsOk && textOk && groupsOk;
+  }
+
+  function validateBeforeGenerate(){
+    // The catalogue Preview flow is intentionally strict: generation is allowed only
+    // after dataset, fields, filters, conditions and calculations contain values.
+    var missing=[];
+    if(!document.getElementById('reportNameInput')?.value.trim()) missing.push('Report name');
+    if(getSelectedFieldCount()===0) missing.push('Select fields');
+    if(!panelComplete('filtersPanel')) missing.push('Filters');
+    if(!panelComplete('conditionsPanel')) missing.push('Conditions');
+    if(!panelComplete('calcConfigPanel')) missing.push('Calculations');
+    if(missing.length){
+      var msg='Please select/fill all required report values before generating: '+missing.join(', ')+'.';
+      if(window.toast) window.toast(msg,'error');
+      else if(window.appToast && window.appToast.show) window.appToast.show(msg,'error');
+      return false;
+    }
+    return true;
+  }
+
+  // Catalogue Preview currently uses asynchronous builder rendering. Re-apply the
+  // selections after each render so wizard.js cannot leave a visible value selected
+  // while its underlying state is empty.
+  var originalPrepare=window.rc08PrepareCataloguePreview;
+  if(typeof originalPrepare==='function'){
+    window.rc08PrepareCataloguePreview=function(card){
+      originalPrepare(card);
+      [900,1400,2000,2800,3800].forEach(function(delay){setTimeout(ensureAllCataloguePreviewValues,delay);});
+    };
+  }
+
+  document.addEventListener('click',function(event){
+    var generate=event.target && event.target.closest ? event.target.closest('#btnGenerateReport') : null;
+    if(!generate) return;
+    if(!validateBeforeGenerate()){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+  },true);
+
+  // If the preview final panel is rebuilt, keep its counts consistent with the
+  // actual builder selections rather than hard-coded demo values.
+  window.rc14RefreshFinalPreviewCounts=function(){
+    var panel=document.getElementById('finalPreviewPanel');
+    if(!panel) return;
+    var stats=panel.querySelectorAll('.final-preview-summary .builder-stat-label');
+    var values=panel.querySelectorAll('.final-preview-summary > div > div:nth-child(2)');
+    if(stats.length<4 || values.length<4) return;
+    values[1].textContent=String(getSelectedFieldCount());
+    var filters=document.getElementById('filtersPanel');
+    var filterCount=filters ? filters.querySelectorAll('select,input,textarea').length : 0;
+    values[2].textContent=String(filterCount);
+  };
+
+  // Capture Preview/step navigation and make sure the state is populated before
+  // wizard.js builds the final preview.
+  document.addEventListener('click',function(event){
+    var target=event.target && event.target.closest ? event.target.closest('#btnPreviewData,#btnNextStep') : null;
+    if(!target) return;
+    setTimeout(function(){
+      ensureAllCataloguePreviewValues();
+      setTimeout(window.rc14RefreshFinalPreviewCounts,120);
+    },120);
+  },true);
 })();
 </script>
 </body>
