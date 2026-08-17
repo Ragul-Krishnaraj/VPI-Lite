@@ -1651,8 +1651,149 @@
     }
   }
 </style>
+<style>
+.loading{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:2147483647;pointer-events:all}.loading.is-visible{display:flex!important}.loading #loader{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;padding:20px 40px;background:rgba(255,255,255,.96);border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.18)}.loading #loaderImg{display:block;max-width:80px;max-height:80px;object-fit:contain}.loading #loaderMessage{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}body.page-is-loading{overflow:hidden!important}
+</style>
+<style>
+
+/* Small circular global loader */
+.loading {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2147483647;
+    pointer-events: all;
+}
+
+.loading.is-visible {
+    display: flex !important;
+}
+
+.loading #loader {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 0;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+}
+
+.loading #loaderImg {
+    display: block;
+    width: 26px;
+    height: 26px;
+    max-width: 26px;
+    max-height: 26px;
+    object-fit: contain;
+}
+
+.loading #loaderMessage {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+body.page-is-loading {
+    overflow: hidden !important;
+}
+
+</style>
+<style>
+
+/* =========================================================
+   GLOBAL LOADER - MEDIUM CIRCLE
+   ========================================================= */
+.loading {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.22);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2147483647;
+    pointer-events: all;
+}
+
+.loading.is-visible {
+    display: flex !important;
+}
+
+.loading #loader {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 78px;
+    height: 78px;
+    min-width: 78px;
+    min-height: 78px;
+    padding: 0;
+    background: #ffffff;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
+}
+
+.loading #loaderImg {
+    display: block;
+    width: 54px;
+    height: 54px;
+    max-width: 54px;
+    max-height: 54px;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.loading #loaderMessage {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+body.page-is-loading {
+    overflow: hidden !important;
+}
+
+</style>
 </head>
 <body>
+<!-- Global Page Loader -->
+<div class="loading" id="globalPageLoader" style="display:none;" aria-hidden="true">
+  <div id="loader" role="status" aria-live="polite"><img alt="Loading" id="loaderImg" tabindex="-1" aria-label="Page Content is loading" class="customizedLoader" src="css/preloader.gif"></div>
+  <span id="loaderMessage" class="sr-only ADA">Page Content is loading... Please Wait</span>
+</div>
+
 <a class="skip-link" href="#mainContent">Skip to main content</a>
 
 <div class="app-shell" id="appShell">
@@ -7376,5 +7517,150 @@
 })();
 </script>
 
+<script>
+(function () {
+    'use strict';
+
+    var loader = document.getElementById('globalPageLoader');
+    if (!loader) return;
+
+    var hideTimer = null;
+    var MIN_LOADER_TIME = 1500;
+    var shownAt = 0;
+
+    window.showPageLoader = function () {
+        clearTimeout(hideTimer);
+        loader.classList.add('is-visible');
+        loader.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('page-is-loading');
+        shownAt = Date.now();
+    };
+
+    window.hidePageLoader = function () {
+        clearTimeout(hideTimer);
+
+        var elapsed = shownAt ? Date.now() - shownAt : 0;
+        var remaining = Math.max(0, MIN_LOADER_TIME - elapsed);
+
+        hideTimer = setTimeout(function () {
+            loader.classList.remove('is-visible');
+            loader.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('page-is-loading');
+            shownAt = 0;
+        }, remaining);
+    };
+
+    /*
+     * SIDEBAR / TOP NAVIGATION
+     * Show loader for actual view navigation and keep it visible for 3.5 sec.
+     */
+    document.addEventListener('click', function (event) {
+        var target = event.target.closest('a, button, [role="button"]');
+        if (!target) return;
+        if (target.closest('#globalPageLoader')) return;
+
+        var isSidebarNavigation =
+            target.closest('.sidebar a') ||
+            target.closest('.sidebar [data-nav-view]') ||
+            target.closest('.sidebar [data-view]') ||
+            target.closest('.sidebar [data-nav]') ||
+            target.closest('.main-nav a') ||
+            target.closest('.top-nav a') ||
+            target.closest('header nav a');
+
+        var isCatalogueTab =
+            target.closest('#view-catalogue .tab-btn');
+
+        /*
+         * Exact RC-13 pagination controls.
+         * These are buttons generated dynamically, so use their IDs/classes.
+         */
+        var isPagination =
+            target.closest('#rc13Pagination') ||
+            target.matches('#rc13First, #rc13Prev, #rc13Next, #rc13Last') ||
+            target.matches('#rc13PageNumbers .rc13-page-number');
+
+        /*
+         * Do NOT show the global loader for modal/search/dropdown/card-menu UI.
+         */
+        var isExcludedUI =
+            target.closest('.modal') ||
+            target.closest('#rc08WorkspaceOverlay') ||
+            target.closest('#rc08PortalMenu') ||
+            target.closest('.card-menu') ||
+            target.closest('.rc08-menu') ||
+            target.closest('.card-kebab') ||
+            target.closest('.report-favourite-btn') ||
+            target.closest('.search-field') ||
+            target.closest('#catalogueSearch') ||
+            target.closest('.saved-search-popover') ||
+            target.closest('.toolbar select') ||
+            target.closest('select') ||
+            target.matches('[data-bs-toggle="modal"]') ||
+            target.matches('[data-toggle="modal"]') ||
+            target.dataset.noLoader !== undefined;
+
+        if (isExcludedUI) return;
+
+        if (isSidebarNavigation || isCatalogueTab || isPagination) {
+            showPageLoader();
+
+            /*
+             * Important: do NOT hide it after 250ms.
+             * hidePageLoader() enforces the full 3.5-second minimum.
+             */
+            hidePageLoader();
+        }
+    }, true);
+
+    /*
+     * Browser/page navigation.
+     */
+    document.addEventListener('click', function (event) {
+        var link = event.target.closest('a[href]');
+        if (!link) return;
+
+        if (
+            link.target === '_blank' ||
+            link.hasAttribute('download') ||
+            link.dataset.noLoader !== undefined
+        ) return;
+
+        var href = link.getAttribute('href');
+        if (!href || href.charAt(0) === '#') return;
+
+        if (
+            link.closest('.modal') ||
+            link.closest('.search-field') ||
+            link.closest('.saved-search-popover') ||
+            link.closest('.card-menu')
+        ) return;
+
+        showPageLoader();
+        hidePageLoader();
+    }, true);
+
+    /*
+     * Hide only after the initial page has finished loading.
+     * If the loader is already active because of a user click, the
+     * minimum 3.5-second timer is still respected.
+     */
+    window.addEventListener('load', function () {
+        if (!shownAt) {
+            loader.classList.remove('is-visible');
+            loader.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('page-is-loading');
+        }
+    });
+
+    window.addEventListener('pageshow', function () {
+        if (!shownAt) {
+            loader.classList.remove('is-visible');
+            loader.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('page-is-loading');
+        }
+    });
+})();
+</script>
 </body>
 </html>
