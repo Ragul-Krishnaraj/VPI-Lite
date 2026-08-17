@@ -1618,6 +1618,39 @@
 .rc08-clone-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
 </style>
 
+<style id="system-reports-tab-fix">
+  /* System Reports is the third catalogue tab; Favourites is now the fourth. */
+  #view-catalogue .tabbar{
+    min-width:620px;
+  }
+  #view-catalogue .tab-btn:nth-child(4) .favourite-tab-icon{
+    color:#8a6a16;
+  }
+  #view-catalogue .tab-btn:nth-child(4).is-active{
+    color:#6b5314;
+    background:#fffdf7;
+  }
+  #view-catalogue .tab-btn:nth-child(4).is-active::after{
+    background:#b58a20;
+  }
+  #view-catalogue .tab-btn:nth-child(3).is-active{
+    color:#17243d;
+    background:#fff;
+  }
+  #view-catalogue .tab-btn:nth-child(3).is-active::after{
+    background:#17243d;
+  }
+  @media(max-width:900px){
+    #view-catalogue .tabbar{
+      width:100%;
+      min-width:0;
+      overflow-x:auto;
+    }
+    #view-catalogue .tab-btn{
+      flex:0 0 auto;
+    }
+  }
+</style>
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
@@ -1801,6 +1834,7 @@
             <div class="tabbar" role="tablist">
               <button class="tab-btn is-active" data-tab="public" role="tab" aria-selected="true">Public Reports</button>
               <button class="tab-btn" data-tab="private" role="tab" aria-selected="false">My Private Reports</button>
+              <button class="tab-btn" data-tab="system" role="tab" aria-selected="false">System Reports</button>
               <button class="tab-btn" data-tab="favourites" role="tab" aria-selected="false">
                 <svg class="favourite-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m12 3 2.78 5.63 6.22.9-4.5 4.38 1.06 6.19L12 17.18 6.44 20.1l1.06-6.19L3 9.53l6.22-.9L12 3z"/></svg>
                 Favourites
@@ -2425,6 +2459,15 @@
     { id: 'RPT-PRIV-102', reportName: 'SEPA Instant Exception Sandbox', description: 'Experimental exception report for SCT Inst rejections, used to validate a new filter combination before publishing.', author: 'Ragul K', visibility: 'private', category: 'Exception Reports', paymentRail: 'SCT Inst', region: 'Europe', frequency: 'Daily', reportStatus: 'draft', version: '0.1', createdAt: '2026-07-20', updatedAt: '2026-07-27', dataset: 'Exceptions' },
   ];
 
+  // System reports are platform-managed reports available to all users.
+  // They use the exact same catalogue card renderer and favourite behaviour as Public Reports.
+  const SYSTEM_REPORTS = [
+    { id: 'RPT-SYS-001', reportName: 'System Payment Processing Health Report', description: 'Platform-managed report showing payment processing health, transaction throughput, service latency, failures, and operational health indicators across payment rails.', author: 'System', visibility: 'system', category: 'Operational Reports', paymentRail: 'Cross-Rail (US)', region: 'Global', frequency: 'Continuous', reportStatus: 'published', version: '3.2', createdAt: '2026-01-10', updatedAt: '2026-07-30', dataset: 'System Availability' },
+    { id: 'RPT-SYS-002', reportName: 'System Availability & SLA Report', description: 'Platform-managed availability report covering uptime, downtime windows, service interruptions, SLA compliance, and impacted transactions.', author: 'System', visibility: 'system', category: 'Availability Reports', paymentRail: 'Cross-Rail (US)', region: 'Global', frequency: 'Daily', reportStatus: 'published', version: '2.8', createdAt: '2026-02-05', updatedAt: '2026-07-28', dataset: 'System Availability' },
+    { id: 'RPT-SYS-003', reportName: 'System Exception & Failure Summary Report', description: 'Platform-managed exception report summarizing rejected, failed, returned, and unresolved transactions with operational failure reasons.', author: 'System', visibility: 'system', category: 'Exception Reports', paymentRail: 'Cross-Rail (US)', region: 'Global', frequency: 'Daily', reportStatus: 'published', version: '2.1', createdAt: '2026-03-01', updatedAt: '2026-07-29', dataset: 'Exceptions' },
+    { id: 'RPT-SYS-004', reportName: 'System Settlement Reconciliation Report', description: 'Platform-managed reconciliation report comparing settlement entries, posting status, reconciliation breaks, and unresolved settlement exceptions.', author: 'System', visibility: 'system', category: 'Reconciliation Reports', paymentRail: 'Cross-Rail (US)', region: 'Global', frequency: 'Daily', reportStatus: 'published', version: '1.9', createdAt: '2026-03-18', updatedAt: '2026-07-27', dataset: 'Settlement Entries' },
+  ];
+
   const DATA_SOURCES = [
     { id: 'ds-txn', name: 'Payment Transactions', description: 'Core transaction ledger across all rails.', fields: ['transaction_id', 'amount', 'currency', 'status', 'rail', 'lifecycle_stage', 'processing_time', 'sla_status', 'submission_time'] },
     { id: 'ds-sys', name: 'System Availability', description: 'Uptime, downtime windows and service health telemetry.', fields: ['uptime_percentage', 'downtime_minutes', 'impacted_transactions', 'downtime_start', 'downtime_end', 'latency_ms', 'timeout_count'] },
@@ -2495,7 +2538,7 @@
   global.VP = global.VP || {};
   global.VP.data = {
     USERS,
-    REPORTS: REPORTS.concat(PRIVATE_REPORTS),
+    REPORTS: REPORTS.concat(PRIVATE_REPORTS, SYSTEM_REPORTS),
     DATA_SOURCES,
     EXECUTIONS_CORE,
     EXECUTIONS_TEMPLATE,
@@ -2978,6 +3021,7 @@
     const f = state.filters;
     if (state.catalogueTab === 'public' && r.visibility !== 'public') return false;
     if (state.catalogueTab === 'private' && r.visibility !== 'private') return false;
+    if (state.catalogueTab === 'system' && r.visibility !== 'system') return false;
     if (state.catalogueSearch && !(r.reportName.toLowerCase().includes(state.catalogueSearch) || r.id.toLowerCase().includes(state.catalogueSearch))) return false;
     if (f.rail && r.paymentRail !== f.rail) return false;
     if (f.category && r.category !== f.category) return false;
