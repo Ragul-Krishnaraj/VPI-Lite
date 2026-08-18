@@ -1783,6 +1783,81 @@
             overflow: hidden !important;
         }
     </style>
+
+<style id="savedSearchModal-final-fix">
+/* SAVE SEARCH naming dialog must always sit ABOVE Advanced Search. */
+#savedSearchModal.modal-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483646 !important;
+    display: none !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    background: rgba(15,23,42,.52) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: none !important;
+    box-sizing: border-box !important;
+}
+#savedSearchModal.modal-overlay.is-open {
+    display: flex !important;
+    pointer-events: auto !important;
+}
+#savedSearchModal.modal-overlay > .modal {
+    position: relative !important;
+    z-index: 2147483647 !important;
+    width: min(500px, calc(100vw - 32px)) !important;
+    max-width: calc(100vw - 32px) !important;
+    margin: 0 !important;
+    background: #fff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 28px 80px rgba(16,24,40,.30) !important;
+    overflow: hidden !important;
+}
+#savedSearchModal .modal-header,
+#savedSearchModal .modal-body,
+#savedSearchModal .modal-footer {
+    position: relative !important;
+    z-index: 2 !important;
+}
+#savedSearchModal .modal-footer {
+    display: flex !important;
+    justify-content: flex-end !important;
+    gap: 10px !important;
+}
+/* Keep Advanced Search underneath the naming dialog. */
+#advancedSearchPanel {
+    z-index: 1000 !important;
+}
+.save-advanced-search-btn { cursor: pointer !important; }
+
+/* One saved-search section only. The source contains an old duplicate panel in the right column; keep only the panel attached to the Saved Searches button. */
+#view-catalogue .col-md-4 .saved-search-panel { display:none !important; }
+.saved-search-tabs {
+    display: flex !important;
+    align-items: center !important;
+}
+.saved-search-tab {
+    border: 0 !important;
+    background: transparent !important;
+    font-weight: 700 !important;
+    color: #17243d !important;
+    cursor: default !important;
+}
+.saved-search-tools {
+    display:flex !important;
+    gap:8px !important;
+    padding:10px 12px !important;
+    border-top:1px solid #eef1f5 !important;
+    border-bottom:1px solid #eef1f5 !important;
+    background:#fafbfc !important;
+}
+.saved-search-list-search { position:relative !important; flex:1 !important; }
+.saved-search-list-search input { width:100% !important; box-sizing:border-box !important; height:32px !important; padding:0 9px !important; border:1px solid #d5dbe5 !important; border-radius:6px !important; }
+.saved-search-tools select { width:120px !important; height:32px !important; border:1px solid #d5dbe5 !important; border-radius:6px !important; background:#fff !important; }
+</style>
+
 </head>
 
 <body>
@@ -2168,7 +2243,7 @@
 
                                                         <div class="advanced-footer-right">
 
-                                                            <button type="button" class="btn btn-default rounded-pill">
+                                                            <button type="button" class="btn btn-default rounded-pill save-advanced-search-btn" id="btnSaveAdvancedSearch">
 
                                                                 SAVE SEARCH
 
@@ -2226,17 +2301,7 @@
 
                                                         <div class="saved-search-tabs">
 
-                                                            <button type="button" class="saved-search-tab active">
-
-                                                                Basic Template
-
-                                                            </button>
-
-                                                            <button type="button" class="saved-search-tab">
-
-                                                                Advanced All Items
-
-                                                            </button>
+                                                            <div class="saved-search-tab active" aria-current="page">Reports search</div>
 
                                                         </div>
 
@@ -2263,6 +2328,24 @@
 
                                                     </div>
 
+
+                                                    <div class="saved-search-tools">
+
+                                                        <div class="saved-search-list-search">
+                                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                                                                <circle cx="11" cy="11" r="7"></circle>
+                                                                <path d="m20 20-4-4"></path>
+                                                            </svg>
+                                                            <input type="search" id="savedSearchListSearch" placeholder="Filter Reports search" autocomplete="off">
+                                                        </div>
+
+                                                        <select id="savedSearchSort" aria-label="Sort saved searches">
+                                                            <option value="recent">Recent</option>
+                                                            <option value="name">Name</option>
+                                                            <option value="created">Created</option>
+                                                        </select>
+
+                                                    </div>
 
                                                     <div class="saved-search-content" id="savedSearchList">
 
@@ -2539,20 +2622,9 @@
                                                 <!-- TABS -->
                                                 <div class="saved-search-tabs">
 
-                                                    <button type="button" class="saved-search-tab active" data-tab="basic">
+                                                            <div class="saved-search-tab active" aria-current="page">Reports search</div>
 
-                                                        Basic Template
-
-                                                    </button>
-
-
-                                                    <button type="button" class="saved-search-tab" data-tab="advanced">
-
-                                                        Advanced All Items
-
-                                                    </button>
-
-                                                </div>
+                                                        </div>
 
 
                                                 <!-- SEARCH -->
@@ -4975,8 +5047,15 @@
           let editingSearchId = null;
           let activeSavedSearchId = null;
           let modalMode = 'save';
-        
-          const fieldIds = ['catalogueSearch','filter-rail','filter-category','filter-region','filter-frequency','filter-author'];
+          let pendingSaveCriteria = null;
+
+          // These are the real controls used by the Advanced Search panel.
+          // The source contains duplicate Advanced Search markup, so always use
+          // the panel that contains the actual SAVE SEARCH button.
+          const advancedSaveButton = () => document.getElementById('btnSaveAdvancedSearch');
+          const getAdvancedPanel = () => advancedSaveButton()?.closest('.advanced-search-panel') || document.querySelector('.advanced-search-panel');
+          const getAdvancedInputs = () => Array.from(getAdvancedPanel()?.querySelectorAll('.advanced-input') || []);
+          const fieldIds = ['reportSearchInput'];
         
           function escapeHtml(value) {
             return String(value == null ? '' : value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -4999,11 +5078,21 @@
           }
         
           function currentCriteria() {
-            const criteria = {};
-            fieldIds.forEach(id => {
-              const el = document.getElementById(id);
-              criteria[id] = el ? String(el.value || '') : '';
+            const criteria = {
+              reportSearchInput: String(document.getElementById('reportSearchInput')?.value || ''),
+              advancedRail: '',
+              advancedCategory: '',
+              advancedRegion: '',
+              advancedFrequency: '',
+              advancedAuthor: ''
+            };
+
+            const inputs = getAdvancedInputs();
+            const keys = ['advancedRail','advancedCategory','advancedRegion','advancedFrequency','advancedAuthor'];
+            inputs.slice(0, 5).forEach((el, index) => {
+              criteria[keys[index]] = String(el.value || '');
             });
+
             return criteria;
           }
         
@@ -5153,11 +5242,23 @@
             if (mode === 'rename') {
               summary.textContent = 'Rename this personal saved search. Its stored criteria will remain unchanged.';
             } else {
-              summary.textContent = 'Criteria to save: ' + criteriaSummary(currentCriteria());
+              // Capture the criteria BEFORE the naming modal is shown.
+              // This is important because opening another modal can cause the
+              // Advanced Search panel to lose its visual open state.
+              pendingSaveCriteria = currentCriteria();
+              summary.textContent = 'Criteria to save: ' + criteriaSummary(pendingSaveCriteria);
+
+              // Keep Advanced Search open underneath the naming dialog.
+              const advancedPanel = getAdvancedPanel();
+              if (advancedPanel) advancedPanel.classList.add('show');
+              const advancedButton = document.getElementById('advanceSearchBtn');
+              if (advancedButton) advancedButton.setAttribute('aria-expanded', 'true');
             }
         
             modal.classList.add('is-open');
             modal.setAttribute('aria-hidden','false');
+            modal.style.display = 'flex';
+            modal.style.zIndex = '2147483646';
             setTimeout(() => input.focus(), 50);
           }
         
@@ -5166,6 +5267,8 @@
             if (!modal) return;
             modal.classList.remove('is-open');
             modal.setAttribute('aria-hidden','true');
+            modal.style.display = '';
+            modal.style.zIndex = '';
             editingSearchId = null;
           }
         
@@ -5212,7 +5315,9 @@
               return;
             }
         
-            const criteria = currentCriteria();
+            const criteria = modalMode === 'save' && pendingSaveCriteria
+              ? pendingSaveCriteria
+              : currentCriteria();
         
             if (!hasCriteria(criteria)) {
               validation.textContent = 'Add at least one search or filter criterion before saving.';
@@ -5231,27 +5336,31 @@
         
             savedSearches.push(item);
             persistSavedSearches();
+            pendingSaveCriteria = null;
             closeModal();
             renderSavedSearchList();
+            openPopover();
         
-            // Creating a saved search does NOT automatically apply it.
-            // The active indicator is reserved for an explicitly applied saved search.
+            // The search is saved but not automatically applied.
+            // The Reports search panel is opened so the new item is immediately visible.
             showMessage('Saved search "' + name + '" added', 'success');
           }
         
           function applySavedSearch(item) {
             const unavailable = [];
-        
-            fieldIds.forEach(id => {
-              const el = document.getElementById(id);
-              if (!el) return;
-        
-              const desired = Object.prototype.hasOwnProperty.call(item.criteria, id)
-                ? item.criteria[id]
-                : '';
-        
+
+            const searchInput = document.getElementById('reportSearchInput');
+            if (searchInput) {
+              searchInput.value = String(item.criteria.reportSearchInput || '');
+              searchInput.dispatchEvent(new Event('input', {bubbles:true}));
+            }
+
+            const advancedInputs = getAdvancedInputs();
+            const advancedKeys = ['advancedRail','advancedCategory','advancedRegion','advancedFrequency','advancedAuthor'];
+            advancedInputs.slice(0, 5).forEach((el, index) => {
+              const desired = String(item.criteria[advancedKeys[index]] || '');
               if (el.tagName === 'SELECT' && desired) {
-                const exists = Array.from(el.options).some(o => String(o.value) === String(desired));
+                const exists = Array.from(el.options).some(o => String(o.value) === desired);
                 if (!exists) {
                   unavailable.push(desired);
                   el.value = '';
@@ -5261,7 +5370,6 @@
               } else {
                 el.value = desired;
               }
-        
               el.dispatchEvent(new Event(el.tagName === 'INPUT' ? 'input' : 'change', {bubbles:true}));
             });
         
@@ -5390,6 +5498,7 @@
         
             const savedBtn = document.getElementById('btnSavedSearches');
             const saveBtn = document.getElementById('btnSaveSearch');
+            const advancedSaveButtons = document.querySelectorAll('.save-advanced-search-btn');
             const closeBtn = document.getElementById('closeSavedSearches');
             const modalClose = document.getElementById('savedSearchModalClose');
             const cancel = document.getElementById('savedSearchCancel');
@@ -5409,7 +5518,20 @@
               open ? closePopover() : openPopover();
             });
         
-            saveBtn && saveBtn.addEventListener('click', () => openModal('save'));
+            saveBtn && saveBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              openModal('save');
+            });
+
+            advancedSaveButtons.forEach(function(button) {
+              button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                openModal('save');
+              });
+            });
+
             closeBtn && closeBtn.addEventListener('click', closePopover);
             modalClose && modalClose.addEventListener('click', closeModal);
             cancel && cancel.addEventListener('click', closeModal);
@@ -8922,7 +9044,7 @@
         
             const tabs =
                 document.querySelectorAll(
-                    ".saved-search-tab"
+                    ".saved-search-tab[data-tab]"
                 );
         
         
